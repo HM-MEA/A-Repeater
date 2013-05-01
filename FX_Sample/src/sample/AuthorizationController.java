@@ -1,7 +1,8 @@
 package sample;
 
-import java.awt.Desktop;
-import java.net.URI;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 import twitter4j.TwitterException;
 import javafx.event.ActionEvent;
@@ -22,13 +23,15 @@ public class AuthorizationController {
 	private Button button1;
 	@FXML
 	private Button button2;
+	@FXML
+	private Button button3;
 	
 	TwitterMain Twmain = new TwitterMain();
 	
 	@FXML
 	protected void startAuthorization(ActionEvent e) throws Exception {
-		this.label1.setText("ブラウザに接続してPINコードを入手します");
 		Twmain.tw_start();
+		this.label1.setText("ブラウザにURLを入れてPINコードを入手して下さい");
 	}
 	
 	@FXML
@@ -39,5 +42,12 @@ public class AuthorizationController {
 		} catch (TwitterException e1) {
 			this.label2.setText("Falsed");
 		}
+	}
+	
+	@FXML
+	protected void copyurl(ActionEvent e){
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringSelection selection = new StringSelection(Twmain.Aurl);
+		clipboard.setContents(selection, null);
 	}
 }
