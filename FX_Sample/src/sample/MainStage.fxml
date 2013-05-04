@@ -8,6 +8,8 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="sample.MainStageController">
   <children>
-    <Button fx:id="button" layoutX="266.0" layoutY="190.0" mnemonicParsing="false" onAction="#accountAuthorization" text="認証開始" />
+    <Button id="button" fx:id="button1" layoutX="118.0" layoutY="110.0" mnemonicParsing="false" onAction="#accountAuthorization" text="認証開始" />
+    <Button fx:id="button2" layoutX="118.0" layoutY="274.0" mnemonicParsing="false" onAction="#readTokenfile" text="更新" />
+    <Label fx:id="label" layoutX="327.0" layoutY="277.0" prefWidth="162.0" />
   </children>
 </AnchorPane>
