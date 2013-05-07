@@ -1,9 +1,11 @@
 package sample;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -28,6 +31,12 @@ public class MainStageController{
 	private Button button2;
 	
 	@FXML
+	private Button button3;
+	
+	@FXML
+	private TextField textfield;
+	
+	@FXML
 	private Label label;
 	
 	@FXML
@@ -42,7 +51,7 @@ public class MainStageController{
 	}
 	
 	@FXML
-	protected void readTokenfile() throws Exception{
+	protected void readTokenfile() throws FileNotFoundException{
 		Scanner scan = new Scanner(Authfile);
 		AccessToken accessToken;
 		while(scan.hasNext()){
@@ -51,7 +60,21 @@ public class MainStageController{
 		}
 		scan.close();
 		setToken();
-		this.label.setText(Twmain.getScreenName());
+		try {
+			this.label.setText(Twmain.getScreenName());
+		} catch (TwitterException e) {
+			this.label.setText("faild");
+			e.printStackTrace();
+		}
+	}
+	
+	@FXML
+	protected void postTweet() throws Exception{
+		String str = this.textfield.getText();
+		if(str.length() > 0){
+			Twmain.postTweet(str);
+		}
+		this.textfield.setText("");
 	}
 	
 	public void setToken(){

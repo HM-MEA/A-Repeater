@@ -1,5 +1,9 @@
 package sample;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -10,10 +14,18 @@ public class TwitterMain {
 
 	Twitter twitter;
 	Status firststatus;
+	File Keyfile = new File("CunsumerKey.txt");
+	Scanner scan;
+	
 
-	TwitterMain() {
+	TwitterMain(){
 		twitter = TwitterFactory.getSingleton();
-		twitter.setOAuthConsumer("3nVuSoBZnx6U4vzUxf5w", "Bcs59EFbbsdF6Sl9Ng71smgStWEGwXXKSjYvPVt7qys");
+		try {
+			scan = new Scanner(Keyfile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		twitter.setOAuthConsumer(scan.next(),scan.next());
 	}
 	
 	public void setToken(AccessToken accessToken){
@@ -24,5 +36,9 @@ public class TwitterMain {
 		String ScreenName;
 		ScreenName = twitter.verifyCredentials().getScreenName();
 		return ScreenName;
+	}
+	
+	public void postTweet(String str) throws Exception{
+		twitter.updateStatus(str);
 	}
 }
