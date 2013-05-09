@@ -34,7 +34,7 @@ public class TwitterAuthorization {
 	
 	public void storeAccessToken() throws IOException{
 		File file = new File("AccessToken.txt");
-		PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file,true)));
+		PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
 		pw.println(accessToken.getToken()+"Å@"+accessToken.getTokenSecret());
 		pw.close();
 	}

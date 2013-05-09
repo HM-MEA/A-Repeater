@@ -2,6 +2,7 @@ package sample;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Scanner;
 
 import twitter4j.Status;
@@ -17,7 +18,6 @@ public class TwitterMain {
 	File Keyfile = new File("CunsumerKey.txt");
 	Scanner scan;
 	
-
 	TwitterMain(){
 		twitter = TwitterFactory.getSingleton();
 		try {
@@ -40,5 +40,10 @@ public class TwitterMain {
 	
 	public void postTweet(String str) throws Exception{
 		twitter.updateStatus(str);
+	}
+	
+	public List<Status> readTimeline() throws TwitterException{
+		List<Status> statuses =  twitter.getHomeTimeline();
+		return statuses;
 	}
 }

@@ -3,10 +3,14 @@ package sample;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
+import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +18,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -38,6 +43,11 @@ public class MainStageController{
 	
 	@FXML
 	private Label label;
+	
+	ObservableList<String> list = FXCollections.observableArrayList();
+    
+	@FXML
+	ListView<String> listView = new ListView<String>(list);
 	
 	@FXML
 	protected void accountAuthorization(ActionEvent e) throws Exception {
@@ -66,6 +76,7 @@ public class MainStageController{
 			this.label.setText("faild");
 			e.printStackTrace();
 		}
+		setHometimeline();
 	}
 	
 	@FXML
@@ -79,5 +90,17 @@ public class MainStageController{
 	
 	public void setToken(){
 		Twmain.setToken(Tokenlist.get(0));
+	}
+	
+	void setHometimeline(){		
+		try {
+			List<Status> statuses = Twmain.readTimeline();
+			for (Status status : statuses) {
+		        list.add(status.getUser().getName() + ":" +  status.getText());
+				System.out.println(status.getUser().getName() + ":" +  status.getText());
+		    }
+		} catch (TwitterException e) {
+		}
+	    
 	}
 }
