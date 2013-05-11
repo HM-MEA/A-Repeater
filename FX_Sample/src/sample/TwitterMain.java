@@ -32,13 +32,13 @@ public class TwitterMain {
 		twitter.setOAuthAccessToken(accessToken);
 	}
 	
-	public String getScreenName() throws TwitterException{
+	public String getScreenName() throws Exception{
 		String ScreenName;
 		ScreenName = twitter.verifyCredentials().getScreenName();
 		return ScreenName;
 	}
 	
-	public void postTweet(String str) throws Exception{
+	public void postTweet(String str) throws TwitterException{
 		twitter.updateStatus(str);
 	}
 	
