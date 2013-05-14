@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
 
+import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -42,8 +43,8 @@ public class TwitterMain {
 		twitter.updateStatus(str);
 	}
 	
-	public List<Status> readTimeline() throws TwitterException{
-		List<Status> statuses =  twitter.getHomeTimeline();
+	public List<Status> readTimeline(int page,long sinceid) throws TwitterException{
+		List<Status> statuses =  twitter.getHomeTimeline(new Paging(1).sinceId(sinceid));
 		return statuses;
 	}
 }
