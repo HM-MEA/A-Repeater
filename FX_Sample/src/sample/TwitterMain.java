@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import twitter4j.Paging;
 import twitter4j.Status;
+import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -41,6 +42,12 @@ public class TwitterMain {
 	
 	public void postTweet(String str) throws TwitterException{
 		twitter.updateStatus(str);
+	}
+	
+	public void postTweet(String str,long reply_id) throws TwitterException{
+		StatusUpdate update = new StatusUpdate(str);
+		update.setInReplyToStatusId(reply_id);
+		twitter.updateStatus(update);
 	}
 	
 	public List<Status> readTimeline(int page,long sinceid) throws TwitterException{

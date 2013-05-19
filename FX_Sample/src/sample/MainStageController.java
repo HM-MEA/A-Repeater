@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TextArea;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -29,8 +30,10 @@ public class MainStageController implements Initializable{
 	
 	File Authfile = new File("AccessToken.txt");
 	ArrayList<AccessToken> Tokenlist = new ArrayList<AccessToken>();
+	ArrayList<Status> StatusList = new ArrayList<Status>();
 	TwitterMain Twmain = new TwitterMain();
 	long status_id = 1;
+	long reply_id = 0;
 	
 	@FXML
 	private Button button1;
@@ -51,11 +54,10 @@ public class MainStageController implements Initializable{
 	private Label label2;
 	   
 	@FXML
-	ListView<String> listView;
+	private ListView<Label> listview;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
 	}
 	
 	@FXML
@@ -93,13 +95,18 @@ public class MainStageController implements Initializable{
 		String str = this.textarea.getText();
 		if(str.length() > 0){
 			try {
-				Twmain.postTweet(str);
+				if(reply_id == 0){
+					Twmain.postTweet(str);
+				}else{
+					Twmain.postTweet(str, reply_id);
+				}
 			} catch (TwitterException e) {
 				this.label2.setText("ìäçeÇ…é∏îsÇµÇ‹ÇµÇΩ");
 				e.printStackTrace();
 			}
 		}
 		this.textarea.setText("");
+		reply_id = 0;
 	}
 	
 	public void setToken(){
@@ -112,11 +119,24 @@ public class MainStageController implements Initializable{
 			Collections.reverse(statuses);
 			status_id = statuses.get(statuses.size() - 1).getId();
 			for (Status status : statuses) {
-		        listView.getItems().add(0,status.getUser().getScreenName() + ":" +  status.getText() + status.getCreatedAt());
+				Label label = new Label();
+				label.setWrapText(true);
+		        label.setText(status.getUser().getScreenName() + ":" +  status.getText() + status.getCreatedAt());
+		        listview.getItems().add(0, label);
+		        StatusList.add(0,status);
 		    }
 		} catch (Exception e) {
 			this.label2.setText("É^ÉCÉÄÉâÉCÉìÇÃçXêVÇ…é∏îsÇµÇ‹ÇµÇΩ");
 			e.printStackTrace();
 		}
+	}
+	
+	@FXML
+	private void onReply(){
+		MultipleSelectionModel<Label> model = listview.getSelectionModel(); 
+		int index = model.getSelectedIndex();
+		Status replystatus = StatusList.get(index);
+		textarea.setText("@" + replystatus.getUser().getScreenName() + " ");
+		reply_id = replystatus.getId();
 	}
 }
