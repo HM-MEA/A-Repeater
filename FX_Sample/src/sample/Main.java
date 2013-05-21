@@ -24,6 +24,11 @@ public class Main extends Application {
 		stage.setScene(scene);
 		stage.show();
 	}
+	
+	@Override
+	public void stop(){
+		TwitterStreamMain.stopUserStream();
+	}
 
 	public static void main(String[] args) {		
 		launch(args);

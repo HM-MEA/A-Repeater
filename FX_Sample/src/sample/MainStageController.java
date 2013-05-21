@@ -30,8 +30,9 @@ public class MainStageController implements Initializable{
 	
 	File Authfile = new File("AccessToken.txt");
 	ArrayList<AccessToken> Tokenlist = new ArrayList<AccessToken>();
-	ArrayList<Status> StatusList = new ArrayList<Status>();
+	static ArrayList<Status> StatusList = new ArrayList<Status>();
 	TwitterMain Twmain = new TwitterMain();
+	TwitterStreamMain TwSmain = new TwitterStreamMain();
 	long status_id = 1;
 	long reply_id = 0;
 	
@@ -54,11 +55,12 @@ public class MainStageController implements Initializable{
 	private Label label2;
 	   
 	@FXML
-	private ListView<Label> listview;
+	static ListView<Label> listview;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 	}
+	
 	
 	@FXML
 	protected void accountAuthorization(ActionEvent e) throws Exception {
@@ -88,6 +90,7 @@ public class MainStageController implements Initializable{
 			e.printStackTrace();
 		}
 		setHometimeline();
+		TwSmain.startUserStream();
 	}
 	
 	@FXML
@@ -111,20 +114,22 @@ public class MainStageController implements Initializable{
 	
 	public void setToken(){
 		Twmain.setToken(Tokenlist.get(0));
+		TwSmain.setToken(Tokenlist.get(0));
 	}
 	
 	void setHometimeline(){
 		try {
 			List<Status> statuses = Twmain.readTimeline(1,status_id);
 			Collections.reverse(statuses);
-			status_id = statuses.get(statuses.size() - 1).getId();
 			for (Status status : statuses) {
 				Label label = new Label();
 				label.setWrapText(true);
 		        label.setText(status.getUser().getScreenName() + ":" +  status.getText() + status.getCreatedAt());
 		        listview.getItems().add(0, label);
 		        StatusList.add(0,status);
+		        
 		    }
+			status_id = statuses.get(0).getId();	
 		} catch (Exception e) {
 			this.label2.setText("タイムラインの更新に失敗しました");
 			e.printStackTrace();
@@ -139,4 +144,5 @@ public class MainStageController implements Initializable{
 		textarea.setText("@" + replystatus.getUser().getScreenName() + " ");
 		reply_id = replystatus.getId();
 	}
+	
 }
