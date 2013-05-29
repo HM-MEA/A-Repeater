@@ -33,7 +33,7 @@ public class MainStageController implements Initializable{
 	static ArrayList<Status> StatusList = new ArrayList<Status>();
 	TwitterMain Twmain = new TwitterMain();
 	TwitterStreamMain TwSmain = new TwitterStreamMain();
-	long status_id = 1;
+	static long status_id = 1;
 	long reply_id = 0;
 	
 	@FXML
@@ -55,12 +55,13 @@ public class MainStageController implements Initializable{
 	private Label label2;
 	   
 	@FXML
-	static ListView<Label> listview;
+	static ListView<Label> timelines;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		readTokenfile();
+		TwSmain.startUserStream();
 	}
-	
 	
 	@FXML
 	protected void accountAuthorization(ActionEvent e) throws Exception {
@@ -74,8 +75,13 @@ public class MainStageController implements Initializable{
 	}
 	
 	@FXML
-	protected void readTokenfile() throws FileNotFoundException{
-		Scanner scan = new Scanner(Authfile);
+	protected void readTokenfile(){
+		Scanner scan = null;
+		try {
+			scan = new Scanner(Authfile);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		AccessToken accessToken;
 		while(scan.hasNext()){
 			accessToken = new AccessToken(scan.next(),scan.next());
@@ -89,8 +95,6 @@ public class MainStageController implements Initializable{
 			this.label2.setText("スクリーンネームの取得に失敗しました");
 			e.printStackTrace();
 		}
-		setHometimeline();
-		TwSmain.startUserStream();
 	}
 	
 	@FXML
@@ -117,28 +121,31 @@ public class MainStageController implements Initializable{
 		TwSmain.setToken(Tokenlist.get(0));
 	}
 	
-	void setHometimeline(){
+	@FXML
+	protected void onSetHometimeline(){
 		try {
 			List<Status> statuses = Twmain.readTimeline(1,status_id);
 			Collections.reverse(statuses);
 			for (Status status : statuses) {
-				Label label = new Label();
-				label.setWrapText(true);
-		        label.setText(status.getUser().getScreenName() + ":" +  status.getText() + status.getCreatedAt());
-		        listview.getItems().add(0, label);
-		        StatusList.add(0,status);
-		        
-		    }
-			status_id = statuses.get(0).getId();	
+				setTimeline(status);
+			}
+			status_id = StatusList.get(0).getId();
 		} catch (Exception e) {
 			this.label2.setText("タイムラインの更新に失敗しました");
-			e.printStackTrace();
 		}
 	}
 	
+	static void setTimeline(Status status){
+		StatusList.add(0,status);
+		status_id = status.getId();
+		
+		Label label = new Label();
+		label.setText(status.getUser().getScreenName() + ":" +  status.getText() + status.getCreatedAt());
+		timelines.getItems().add(0,label);
+	}
 	@FXML
 	private void onReply(){
-		MultipleSelectionModel<Label> model = listview.getSelectionModel(); 
+		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
 		int index = model.getSelectedIndex();
 		Status replystatus = StatusList.get(index);
 		textarea.setText("@" + replystatus.getUser().getScreenName() + " ");

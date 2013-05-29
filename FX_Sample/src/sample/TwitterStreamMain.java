@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import javafx.scene.control.Label;
-
 import twitter4j.Status;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
@@ -42,11 +40,7 @@ public class TwitterStreamMain {
 	}
 	
 	protected void setStreamStatus(Status status){
-		MainStageController.StatusList.add(0,status);
-		
-		Label label = new Label();
-		label.setText(status.getUser().getScreenName() + ":" +  status.getText() + status.getCreatedAt());
-		MainStageController.listview.getItems().add(0, label);
+		MainStageController.setTimeline(status);
 	}
 	
 	class MyUserStreamAdapter extends UserStreamAdapter{
@@ -54,6 +48,4 @@ public class TwitterStreamMain {
 			setStreamStatus(status);
 		}
 	}
-	
-	
 }
