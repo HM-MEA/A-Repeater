@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import javafx.application.Platform;
+
 import twitter4j.Status;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
@@ -15,6 +17,7 @@ public class TwitterStreamMain {
 	static TwitterStream twitterstream;
 	File Keyfile = new File("CunsumerKey.txt");
 	Scanner scan;
+	String ScreenName;
 
 	TwitterStreamMain(){
 		twitterstream = new TwitterStreamFactory().getInstance();
@@ -33,6 +36,8 @@ public class TwitterStreamMain {
 	public void startUserStream(){
 		twitterstream.addListener(new MyUserStreamAdapter());
 		twitterstream.user();
+		ScreenName = "@" + MainStageController.ScreenName;
+
 	}
 	
 	public static void stopUserStream(){
@@ -43,9 +48,21 @@ public class TwitterStreamMain {
 		MainStageController.setTimeline(status);
 	}
 	
+	protected void setStreamMention(Status status){
+		MainStageController.setMention(status);
+	}
+	
 	class MyUserStreamAdapter extends UserStreamAdapter{
-		public void onStatus(Status status){
-			setStreamStatus(status);
+		public void onStatus(final Status status){
+			Platform.runLater(new Runnable(){
+				@Override
+				public void run(){
+					if(status.getText().contains(ScreenName)){
+						setStreamMention(status);
+					}
+					setStreamStatus(status);
+				}
+			});
 		}
 	}
 }

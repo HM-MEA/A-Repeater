@@ -50,8 +50,21 @@ public class TwitterMain {
 		twitter.updateStatus(update);
 	}
 	
-	public List<Status> readTimeline(int page,long sinceid) throws TwitterException{
+	public void retweet(Status status) throws TwitterException{
+		twitter.retweetStatus(status.getId());
+	}
+	
+	public void favorite(Status status) throws TwitterException{
+		twitter.createFavorite(status.getId());
+	}
+	
+	public List<Status> getTimeline(int page,long sinceid) throws TwitterException{
 		List<Status> statuses =  twitter.getHomeTimeline(new Paging(1).sinceId(sinceid));
+		return statuses;
+	}
+	
+	public List<Status> getMentions(int page,long sinceid) throws TwitterException{
+		List<Status> statuses = twitter.getMentionsTimeline(new Paging(1).sinceId(sinceid));
 		return statuses;
 	}
 }

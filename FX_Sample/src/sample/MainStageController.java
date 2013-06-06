@@ -30,11 +30,14 @@ public class MainStageController implements Initializable{
 	
 	File Authfile = new File("AccessToken.txt");
 	ArrayList<AccessToken> Tokenlist = new ArrayList<AccessToken>();
-	static ArrayList<Status> StatusList = new ArrayList<Status>();
+	static ArrayList<Status> TimelineList = new ArrayList<Status>();
+	static ArrayList<Status> MentionsList = new ArrayList<Status>();
 	TwitterMain Twmain = new TwitterMain();
 	TwitterStreamMain TwSmain = new TwitterStreamMain();
-	static long status_id = 1;
+	static long Timeline_id = 1;
+	static long Mention_id = 1;
 	long reply_id = 0;
+	static String ScreenName;
 	
 	@FXML
 	private Button button1;
@@ -56,6 +59,9 @@ public class MainStageController implements Initializable{
 	   
 	@FXML
 	static ListView<Label> timelines;
+	
+	@FXML
+	static ListView<Label> mentions;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -90,7 +96,8 @@ public class MainStageController implements Initializable{
 		scan.close();
 		setToken();
 		try {
-			this.label1.setText(Twmain.getScreenName());
+			ScreenName = Twmain.getScreenName();
+			this.label1.setText(ScreenName);
 		} catch (Exception e) {
 			this.label2.setText("ÉXÉNÉäÅ[ÉìÉlÅ[ÉÄÇÃéÊìæÇ…é∏îsÇµÇ‹ÇµÇΩ");
 			e.printStackTrace();
@@ -107,9 +114,9 @@ public class MainStageController implements Initializable{
 				}else{
 					Twmain.postTweet(str, reply_id);
 				}
+			this.label2.setText("ìäçeÇµÇ‹ÇµÇΩ");
 			} catch (TwitterException e) {
 				this.label2.setText("ìäçeÇ…é∏îsÇµÇ‹ÇµÇΩ");
-				e.printStackTrace();
 			}
 		}
 		this.textarea.setText("");
@@ -122,34 +129,108 @@ public class MainStageController implements Initializable{
 	}
 	
 	@FXML
-	protected void onSetHometimeline(){
+	protected void onUpdateTimelines(){
 		try {
-			List<Status> statuses = Twmain.readTimeline(1,status_id);
-			Collections.reverse(statuses);
-			for (Status status : statuses) {
+			List<Status> TimelineStatuses = Twmain.getTimeline(1,Timeline_id);
+			List<Status> MentionStatuses = Twmain.getMentions(1, Mention_id);
+			Collections.reverse(TimelineStatuses);
+			Collections.reverse(MentionStatuses);
+			for (Status status : TimelineStatuses) {
 				setTimeline(status);
 			}
-			status_id = StatusList.get(0).getId();
+			for(Status status : MentionStatuses){
+				setMention(status);
+			}
 		} catch (Exception e) {
 			this.label2.setText("É^ÉCÉÄÉâÉCÉìÇÃçXêVÇ…é∏îsÇµÇ‹ÇµÇΩ");
 		}
 	}
 	
 	static void setTimeline(Status status){
-		StatusList.add(0,status);
-		status_id = status.getId();
+		TimelineList.add(0,status);
+		Timeline_id = status.getId();
 		
 		Label label = new Label();
-		label.setText(status.getUser().getScreenName() + ":" +  status.getText() + status.getCreatedAt());
+		label.setText(status.getUser().getScreenName() + ":" +  status.getText() + "Å@" + status.getCreatedAt());
 		timelines.getItems().add(0,label);
 	}
+	
+	static void setMention(Status status){
+		MentionsList.add(0,status);
+		Mention_id = status.getId();
+		
+		Label label = new Label();
+		label.setText(status.getUser().getScreenName() + ":" +  status.getText() + "Å@" + status.getCreatedAt());
+		mentions.getItems().add(0,label);
+	}
+	
 	@FXML
-	private void onReply(){
+	private void onTimelineReply(){
 		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
 		int index = model.getSelectedIndex();
-		Status replystatus = StatusList.get(index);
+		Status replystatus = TimelineList.get(index);
 		textarea.setText("@" + replystatus.getUser().getScreenName() + " ");
 		reply_id = replystatus.getId();
 	}
 	
+	@FXML
+	private void onTimelineReTweet(){
+		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
+		int index = model.getSelectedIndex();
+		Status retweetstatus = TimelineList.get(index);
+		try {
+			Twmain.retweet(retweetstatus);
+			this.label2.setText("RetweetÇµÇ‹ÇµÇΩ");
+		} catch (TwitterException e) {
+			this.label2.setText("ReTweetÇ…é∏îsÇµÇ‹ÇµÇΩ");
+		}
+	}
+	
+	@FXML
+	private void onTimelineFavorite(){
+		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
+		int index = model.getSelectedIndex();
+		Status favoritestatus = TimelineList.get(index);
+		try {
+			Twmain.favorite(favoritestatus);
+			this.label2.setText("FavoriteÇµÇ‹ÇµÇΩ");
+		} catch (TwitterException e) {
+			this.label2.setText("FavoriteÇ…é∏îsÇµÇ‹ÇµÇΩ");
+		}
+	}
+	
+	@FXML
+	private void onMentionsReply(){
+		MultipleSelectionModel<Label> model = mentions.getSelectionModel();
+		int index = model.getSelectedIndex();
+		Status replystatus = MentionsList.get(index);
+		textarea.setText("@" + replystatus.getUser().getScreenName() + "Å@");
+		reply_id = replystatus.getId();
+	}
+	
+	@FXML
+	private void onMentionReTweet(){
+		MultipleSelectionModel<Label> model = mentions.getSelectionModel(); 
+		int index = model.getSelectedIndex();
+		Status retweetstatus = MentionsList.get(index);
+		try {
+			Twmain.retweet(retweetstatus);
+			this.label2.setText("RetweetÇµÇ‹ÇµÇΩ");
+		} catch (TwitterException e) {
+			this.label2.setText("ReTweetÇ…é∏îsÇµÇ‹ÇµÇΩ");
+		}
+	}
+	
+	@FXML
+	private void onMentionFavorite(){
+		MultipleSelectionModel<Label> model = mentions.getSelectionModel(); 
+		int index = model.getSelectedIndex();
+		Status favoritestatus = MentionsList.get(index);
+		try {
+			Twmain.favorite(favoritestatus);
+			this.label2.setText("FavoriteÇµÇ‹ÇµÇΩ");
+		} catch (TwitterException e) {
+			this.label2.setText("FavoriteÇ…é∏îsÇµÇ‹ÇµÇΩ");
+		}
+	}
 }
