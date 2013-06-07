@@ -27,6 +27,7 @@ public class TwitterStreamMain {
 			e.printStackTrace();
 		}
 		twitterstream.setOAuthConsumer(scan.next(),scan.next());
+		twitterstream.addListener(new MyUserStreamAdapter());
 	}
 	
 	public void setToken(AccessToken accessToken){
@@ -34,13 +35,15 @@ public class TwitterStreamMain {
 	}
 	
 	public void startUserStream(){
-		twitterstream.addListener(new MyUserStreamAdapter());
 		twitterstream.user();
 		ScreenName = "@" + MainStageController.ScreenName;
-
 	}
 	
 	public static void stopUserStream(){
+		twitterstream.shutdown();
+	}
+	
+	public void stopStream(){
 		twitterstream.shutdown();
 	}
 	

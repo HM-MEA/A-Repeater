@@ -12,6 +12,7 @@ import java.util.Scanner;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
@@ -56,6 +58,9 @@ public class MainStageController implements Initializable{
 	
 	@FXML
 	private Label label2;
+	
+	@FXML
+	static CheckBox streamcheck;
 	   
 	@FXML
 	static ListView<Label> timelines;
@@ -66,7 +71,9 @@ public class MainStageController implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		readTokenfile();
-		TwSmain.startUserStream();
+		onUpdateTimelines();
+		streamcheck.setSelected(true);
+		onStreamChecked();
 	}
 	
 	@FXML
@@ -129,7 +136,7 @@ public class MainStageController implements Initializable{
 	}
 	
 	@FXML
-	protected void onUpdateTimelines(){
+	private void onUpdateTimelines(){
 		try {
 			List<Status> TimelineStatuses = Twmain.getTimeline(1,Timeline_id);
 			List<Status> MentionStatuses = Twmain.getMentions(1, Mention_id);
@@ -232,5 +239,21 @@ public class MainStageController implements Initializable{
 		} catch (TwitterException e) {
 			this.label2.setText("FavoriteÇ…é∏îsÇµÇ‹ÇµÇΩ");
 		}
+	}
+	
+	@FXML
+	private void onStreamChecked(){
+		if(streamcheck.isSelected()){
+			TwSmain.startUserStream();
+			this.label2.setText("streamÇ…ê⁄ë±ÇµÇ‹ÇµÇΩ");
+		}else{
+			TwSmain.stopStream();
+			this.label2.setText("streamÇêÿífÇµÇ‹ÇµÇΩ");
+		}
+	}
+	
+	@FXML
+	private void onClosed(){
+		Platform.exit();
 	}
 }
