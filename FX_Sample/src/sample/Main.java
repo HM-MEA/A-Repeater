@@ -27,7 +27,6 @@ public class Main extends Application {
 	
 	@Override
 	public void stop(){
-		TwitterStreamMain.stopUserStream();
 	}
 
 	public static void main(String[] args) {		

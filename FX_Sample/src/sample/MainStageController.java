@@ -13,6 +13,8 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -63,17 +65,38 @@ public class MainStageController implements Initializable{
 	static CheckBox streamcheck;
 	   
 	@FXML
-	static ListView<Label> timelines;
+	private ListView<Label> timelines;
 	
 	@FXML
-	static ListView<Label> mentions;
+	private ListView<Label> mentions;
 	
 	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
+	public void initialize(URL url, ResourceBundle rb) {
 		readTokenfile();
 		onUpdateTimelines();
-		streamcheck.setSelected(true);
-		onStreamChecked();
+		TwSmain.timeline_status.addListener(new ChangeListener<Status>(){
+			@Override
+			public void changed(ObservableValue<? extends Status> arg0,	Status arg1, Status arg2) {
+				setTimeline(arg2);
+			}
+		});
+		TwSmain.mention_status.addListener(new ChangeListener<Status>(){
+			@Override
+			public void changed(ObservableValue<? extends Status> arg0,	Status arg1, Status arg2) {
+				setMention(arg2);
+			}
+		});
+		TwSmain.stream_f.addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0,	Number arg1, Number arg2) {
+				if(arg2.intValue() == 1){
+					streamcheck.setSelected(true);
+				}else{
+					streamcheck.setSelected(false);
+				}
+			}
+		});
+		TwSmain.startUserStream();
 	}
 	
 	@FXML
@@ -153,7 +176,7 @@ public class MainStageController implements Initializable{
 		}
 	}
 	
-	static void setTimeline(Status status){
+	public void setTimeline(Status status){
 		TimelineList.add(0,status);
 		Timeline_id = status.getId();
 		
@@ -162,7 +185,7 @@ public class MainStageController implements Initializable{
 		timelines.getItems().add(0,label);
 	}
 	
-	static void setMention(Status status){
+	public void setMention(Status status){
 		MentionsList.add(0,status);
 		Mention_id = status.getId();
 		

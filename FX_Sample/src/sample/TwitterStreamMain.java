@@ -5,6 +5,10 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import twitter4j.Status;
 import twitter4j.TwitterStream;
@@ -18,6 +22,9 @@ public class TwitterStreamMain {
 	File Keyfile = new File("CunsumerKey.txt");
 	Scanner scan;
 	String ScreenName;
+	ObjectProperty<Status> timeline_status = new SimpleObjectProperty<Status>();
+	ObjectProperty<Status> mention_status = new SimpleObjectProperty<Status>();
+	IntegerProperty stream_f = new SimpleIntegerProperty();
 
 	TwitterStreamMain(){
 		twitterstream = new TwitterStreamFactory().getInstance();
@@ -37,33 +44,27 @@ public class TwitterStreamMain {
 	public void startUserStream(){
 		twitterstream.user();
 		ScreenName = "@" + MainStageController.ScreenName;
+		stream_f.set(1);
 	}
 	
-	public static void stopUserStream(){
+	public void stopUserStream(){
 		twitterstream.shutdown();
+		stream_f.set(0);
 	}
 	
 	public void stopStream(){
 		twitterstream.shutdown();
 	}
-	
-	protected void setStreamStatus(Status status){
-		MainStageController.setTimeline(status);
-	}
-	
-	protected void setStreamMention(Status status){
-		MainStageController.setMention(status);
-	}
-	
+		
 	class MyUserStreamAdapter extends UserStreamAdapter{
 		public void onStatus(final Status status){
 			Platform.runLater(new Runnable(){
 				@Override
 				public void run(){
 					if(status.getText().contains(ScreenName)){
-						setStreamMention(status);
+						mention_status.set(status);
 					}
-					setStreamStatus(status);
+					timeline_status.set(status);
 				}
 			});
 		}
