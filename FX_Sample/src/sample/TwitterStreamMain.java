@@ -2,6 +2,7 @@ package sample;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 import javafx.application.Platform;
@@ -9,10 +10,18 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Popup;
+import javafx.stage.PopupWindow;
+import javafx.stage.Stage;
 
 import twitter4j.Status;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 import twitter4j.auth.AccessToken;
 
@@ -67,6 +76,9 @@ public class TwitterStreamMain {
 					timeline_status.set(status);
 				}
 			});
+		}
+		public void onFavorite(User source, User target,Status favoritedStatus){
+			System.out.println(source.getScreenName() + "‚ª" + target.getScreenName() + "‚Ì" + favoritedStatus.getText() + "‚ð‚¨‹C‚É“ü‚è‚É“o˜^‚µ‚Ü‚µ‚½");	
 		}
 	}
 }
