@@ -19,6 +19,7 @@ import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 
 import twitter4j.Status;
+import twitter4j.TwitterException;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
@@ -50,9 +51,9 @@ public class TwitterStreamMain {
 		twitterstream.setOAuthAccessToken(accessToken);
 	}
 	
-	public void startUserStream(){
+	public void startUserStream() throws Exception{
 		twitterstream.user();
-		ScreenName = "@" + MainStageController.ScreenName;
+		ScreenName = "@" + twitterstream.getScreenName();
 		stream_f.set(1);
 	}
 	

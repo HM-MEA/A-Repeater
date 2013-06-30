@@ -6,14 +6,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="500.0" minWidth="250.0" prefHeight="535.0" prefWidth="250.0" xmlns:fx="http://javafx.com/fxml" fx:controller="sample.MainStageController">
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="550.0" minWidth="250.0" prefHeight="550.0" prefWidth="250.0" xmlns:fx="http://javafx.com/fxml" fx:controller="sample.MainStageController">
   <children>
     <Button id="button" fx:id="button1" mnemonicParsing="false" onAction="#accountAuthorization" prefHeight="28.0" text="認証開始" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
     <Button fx:id="button2" mnemonicParsing="false" onAction="#onUpdateTimelines" prefHeight="28.0" text="更新" AnchorPane.leftAnchor="68.0" AnchorPane.topAnchor="0.0" />
     <Label id="label" fx:id="label1" alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="250.0" text="ScreenName" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0" />
     <Button id="button2" fx:id="button3" mnemonicParsing="false" onAction="#postTweet" prefHeight="62.0" text="投稿" AnchorPane.bottomAnchor="22.0" AnchorPane.rightAnchor="0.0" />
     <Label fx:id="label2" alignment="CENTER_RIGHT" prefHeight="21.000099999997474" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-    <TabPane prefHeight="395.0" prefWidth="250.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="56.0">
+    <TabPane id="TimelineTab" fx:id="TwitterTab" prefHeight="395.0" prefWidth="250.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="56.0">
       <tabs>
         <Tab closable="false" text="Timeline">
           <content>
@@ -24,6 +24,8 @@
                     <MenuItem mnemonicParsing="false" onAction="#onTimelineReply" text="返信" />
                     <MenuItem mnemonicParsing="false" onAction="#onTimelineReTweet" text="ReTweet" />
                     <MenuItem mnemonicParsing="false" onAction="#onTimelineFavorite" text="Favorite" />
+                    <MenuItem mnemonicParsing="false" onAction="#onOpenTimelineUser" text="Userを表示" />
+                    <MenuItem mnemonicParsing="false" onAction="#onSetTimelineChats" text="会話の表示" />
                   </items>
                 </ContextMenu>
               </contextMenu>
@@ -39,10 +41,17 @@
                     <MenuItem mnemonicParsing="false" onAction="#onMentionsReply" text="返信" />
                     <MenuItem mnemonicParsing="false" onAction="#onMentionReTweet" text="ReTweet" />
                     <MenuItem mnemonicParsing="false" onAction="#onMentionFavorite" text="Favorite" />
+                    <MenuItem mnemonicParsing="false" onAction="#onOpenMentionUser" text="Userを表示" />
+                    <MenuItem mnemonicParsing="false" text="会話の表示" />
                   </items>
                 </ContextMenu>
               </contextMenu>
             </ListView>
+          </content>
+        </Tab>
+        <Tab closable="false" text="会話">
+          <content>
+            <ListView fx:id="chats" prefHeight="200.0" prefWidth="200.0" />
           </content>
         </Tab>
       </tabs>

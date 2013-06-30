@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="249.5" xmlns:fx="http://javafx.com/fxml" fx:controller="sample.UserWindowController">
+  <children>
+    <Label id="Screen" fx:id="ScreenName" alignment="TOP_LEFT" layoutY="84.0" prefWidth="221.99990000000253" AnchorPane.leftAnchor="14.17" AnchorPane.rightAnchor="13.33" />
+    <Label fx:id="UserIntroduction" alignment="TOP_LEFT" layoutY="110.0" prefHeight="80.0" prefWidth="216.5" textFill="#292929" textOverrun="CLIP" wrapText="true" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="13.5" />
+    <ImageView id="icon" fx:id="Icon" fitHeight="60.0" fitWidth="60.333335876464844" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="95.0" AnchorPane.rightAnchor="94.17" AnchorPane.topAnchor="14.0" />
+    <TabPane prefHeight="280.0" prefWidth="222.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="13.5" AnchorPane.topAnchor="206.0">
+      <tabs>
+        <Tab closable="false" text="Tweet">
+          <content>
+            <ListView fx:id="UserTweet" prefHeight="200.0" prefWidth="200.0" />
+          </content>
+        </Tab>
+        <Tab closable="false" text="Favorite">
+          <content>
+            <ListView fx:id="UserFavorite" prefHeight="200.0" prefWidth="200.0" />
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </children>
+</AnchorPane>

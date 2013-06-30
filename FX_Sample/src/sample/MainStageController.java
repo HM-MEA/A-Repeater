@@ -2,6 +2,7 @@ package sample;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -34,12 +36,10 @@ public class MainStageController implements Initializable{
 	
 	File Authfile = new File("AccessToken.txt");
 	ArrayList<AccessToken> Tokenlist = new ArrayList<AccessToken>();
-	static ArrayList<Status> TimelineList = new ArrayList<Status>();
-	static ArrayList<Status> MentionsList = new ArrayList<Status>();
 	TwitterMain Twmain = new TwitterMain();
 	TwitterStreamMain TwSmain = new TwitterStreamMain();
-	static long Timeline_id = 1;
-	static long Mention_id = 1;
+	long Timeline_id = 1;
+	long Mention_id = 1;
 	long reply_id = 0;
 	static String ScreenName;
 	
@@ -70,6 +70,12 @@ public class MainStageController implements Initializable{
 	@FXML
 	private ListView<Label> mentions;
 	
+	@FXML
+	private ListView<Label> chats;
+	
+	@FXML
+	private TabPane TwitterTab;
+	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		readTokenfile();
@@ -96,7 +102,11 @@ public class MainStageController implements Initializable{
 				}
 			}
 		});
-		TwSmain.startUserStream();
+		try {
+			TwSmain.startUserStream();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@FXML
@@ -177,28 +187,27 @@ public class MainStageController implements Initializable{
 	}
 	
 	public void setTimeline(Status status){
-		TimelineList.add(0,status);
 		Timeline_id = status.getId();
 		
 		Label label = new Label();
-		label.setText(status.getUser().getScreenName() + ":" +  status.getText() + "Å@" + status.getCreatedAt());
+		label.setUserData(status);
+		label.setText(StringController.createTweetString(status));
 		timelines.getItems().add(0,label);
 	}
 	
 	public void setMention(Status status){
-		MentionsList.add(0,status);
 		Mention_id = status.getId();
 		
 		Label label = new Label();
-		label.setText(status.getUser().getScreenName() + ":" +  status.getText() + "Å@" + status.getCreatedAt());
+		label.setUserData(status);
+		label.setText(StringController.createTweetString(status));
 		mentions.getItems().add(0,label);
 	}
 	
 	@FXML
 	private void onTimelineReply(){
 		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
-		int index = model.getSelectedIndex();
-		Status replystatus = TimelineList.get(index);
+		Status replystatus = (Status)model.getSelectedItem().getUserData();
 		textarea.setText("@" + replystatus.getUser().getScreenName() + " ");
 		reply_id = replystatus.getId();
 	}
@@ -206,8 +215,7 @@ public class MainStageController implements Initializable{
 	@FXML
 	private void onTimelineReTweet(){
 		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
-		int index = model.getSelectedIndex();
-		Status retweetstatus = TimelineList.get(index);
+		Status retweetstatus = (Status)model.getSelectedItem().getUserData();
 		try {
 			Twmain.retweet(retweetstatus);
 			this.label2.setText("RetweetÇµÇ‹ÇµÇΩ");
@@ -219,8 +227,7 @@ public class MainStageController implements Initializable{
 	@FXML
 	private void onTimelineFavorite(){
 		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
-		int index = model.getSelectedIndex();
-		Status favoritestatus = TimelineList.get(index);
+		Status favoritestatus = (Status)model.getSelectedItem().getUserData();
 		try {
 			Twmain.favorite(favoritestatus);
 			this.label2.setText("FavoriteÇµÇ‹ÇµÇΩ");
@@ -232,17 +239,15 @@ public class MainStageController implements Initializable{
 	@FXML
 	private void onMentionsReply(){
 		MultipleSelectionModel<Label> model = mentions.getSelectionModel();
-		int index = model.getSelectedIndex();
-		Status replystatus = MentionsList.get(index);
-		textarea.setText("@" + replystatus.getUser().getScreenName() + "Å@");
+		Status replystatus = (Status)model.getSelectedItem().getUserData();
+		textarea.setText("@" + replystatus.getUser().getScreenName() + " ");
 		reply_id = replystatus.getId();
 	}
 	
 	@FXML
 	private void onMentionReTweet(){
 		MultipleSelectionModel<Label> model = mentions.getSelectionModel(); 
-		int index = model.getSelectedIndex();
-		Status retweetstatus = MentionsList.get(index);
+		Status retweetstatus = (Status)model.getSelectedItem().getUserData();
 		try {
 			Twmain.retweet(retweetstatus);
 			this.label2.setText("RetweetÇµÇ‹ÇµÇΩ");
@@ -254,8 +259,7 @@ public class MainStageController implements Initializable{
 	@FXML
 	private void onMentionFavorite(){
 		MultipleSelectionModel<Label> model = mentions.getSelectionModel(); 
-		int index = model.getSelectedIndex();
-		Status favoritestatus = MentionsList.get(index);
+		Status favoritestatus = (Status)model.getSelectedItem().getUserData();
 		try {
 			Twmain.favorite(favoritestatus);
 			this.label2.setText("FavoriteÇµÇ‹ÇµÇΩ");
@@ -265,10 +269,68 @@ public class MainStageController implements Initializable{
 	}
 	
 	@FXML
+	private void onOpenTimelineUser(){
+		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
+		Status OpenUserStatus = (Status)model.getSelectedItem().getUserData();
+		openUser(OpenUserStatus);
+	}
+	
+	@FXML
+	private void onOpenMentionUser(){
+		MultipleSelectionModel<Label> model = mentions.getSelectionModel(); 
+		Status OpenUserStatus = (Status)model.getSelectedItem().getUserData();
+		openUser(OpenUserStatus);
+	}
+	
+	private void openUser(Status status){
+		Stage AStage = new Stage();
+		AStage.setTitle("User - @" + status.getUser().getScreenName());
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("UserWindow.fxml"));
+			Parent Aroot = (Parent)loader.load();
+			UserWindowController controller = loader.getController();
+			controller.setUserInfo(Twmain,status.getUser());
+			Scene Ascene = new Scene(Aroot);
+			AStage.setScene(Ascene);
+			AStage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@FXML
+	private void onSetTimelineChats(){
+		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
+		Status OpenUserStatus = (Status)model.getSelectedItem().getUserData();
+		try {
+			setChats(OpenUserStatus);
+		} catch (TwitterException e) {
+		}
+		TwitterTab.getSelectionModel().select(2);
+	}
+	
+	private void setChats(Status status) throws TwitterException{
+		chats.getItems().remove(0,chats.getItems().size());
+		long chatsId = status.getId();
+		while(chatsId != 0){
+			Status replystatus = Twmain.getStatus(chatsId);
+			chats.setUserData(replystatus);
+			Label label = new Label();
+			label.setText(StringController.createTweetString(replystatus));
+			chats.getItems().add(0,label);
+			chatsId = replystatus.getInReplyToStatusId();
+		}
+	}
+	
+	@FXML
 	private void onStreamChecked(){
 		if(streamcheck.isSelected()){
-			TwSmain.startUserStream();
-			this.label2.setText("streamÇ…ê⁄ë±ÇµÇ‹ÇµÇΩ");
+			try {
+				TwSmain.startUserStream();
+				this.label2.setText("streamÇ…ê⁄ë±ÇµÇ‹ÇµÇΩ");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}else{
 			TwSmain.stopStream();
 			this.label2.setText("streamÇêÿífÇµÇ‹ÇµÇΩ");

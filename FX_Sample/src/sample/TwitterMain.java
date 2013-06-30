@@ -58,6 +58,16 @@ public class TwitterMain {
 		twitter.createFavorite(status.getId());
 	}
 	
+	public List<Status> getUserTweet(long userid) throws TwitterException{
+		List<Status> statuses =  twitter.getUserTimeline(userid);
+		return statuses;
+	}
+	
+	public List<Status> getUserFavorite(long userid) throws TwitterException{
+		List<Status> statuses =  twitter.getFavorites(userid);
+		return statuses;
+	}
+			
 	public List<Status> getTimeline(int page,long sinceid) throws TwitterException{
 		List<Status> statuses =  twitter.getHomeTimeline(new Paging(1).sinceId(sinceid));
 		return statuses;
@@ -66,5 +76,9 @@ public class TwitterMain {
 	public List<Status> getMentions(int page,long sinceid) throws TwitterException{
 		List<Status> statuses = twitter.getMentionsTimeline(new Paging(1).sinceId(sinceid));
 		return statuses;
+	}
+	
+	public Status getStatus(long Id) throws TwitterException{
+		return twitter.showStatus(Id);
 	}
 }
