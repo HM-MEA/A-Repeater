@@ -10,6 +10,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
+import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
@@ -25,6 +26,7 @@ public class TwitterStreamMain {
 	String ScreenName;
 	ObjectProperty<Status> timeline_status = new SimpleObjectProperty<Status>();
 	ObjectProperty<Status> mention_status = new SimpleObjectProperty<Status>();
+	ObjectProperty<DirectMessage> dmessage = new SimpleObjectProperty<DirectMessage>();
 	IntegerProperty stream_f = new SimpleIntegerProperty();
 
 	TwitterStreamMain(){
@@ -71,6 +73,9 @@ public class TwitterStreamMain {
 		}
 		public void onFavorite(User source, User target,Status favoritedStatus){
 			System.out.println(source.getScreenName() + "‚ª" + target.getScreenName() + "‚Ì" + favoritedStatus.getText() + "‚ð‚¨‹C‚É“ü‚è‚É“o˜^‚µ‚Ü‚µ‚½");	
+		}
+		public void onDirectMessage(DirectMessage dm){
+			dmessage.set(dm);
 		}
 	}
 }

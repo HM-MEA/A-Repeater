@@ -100,6 +100,12 @@ public class MainStageController implements Initializable{
 				setMention(arg2);
 			}
 		});
+		TwSmain.dmessage.addListener(new ChangeListener<DirectMessage>(){
+			@Override
+			public void changed(ObservableValue<? extends DirectMessage> arg0,DirectMessage arg1, DirectMessage arg2) {
+				setDM(arg2);
+			}	
+		});
 		TwSmain.stream_f.addListener(new ChangeListener<Number>(){
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0,	Number arg1, Number arg2) {
