@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
+import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
@@ -40,6 +41,7 @@ public class MainStageController implements Initializable{
 	TwitterStreamMain TwSmain = new TwitterStreamMain();
 	long Timeline_id = 1;
 	long Mention_id = 1;
+	long Message_id = 1;
 	long reply_id = 0;
 	static String ScreenName;
 	
@@ -69,6 +71,9 @@ public class MainStageController implements Initializable{
 	
 	@FXML
 	private ListView<Label> mentions;
+	
+	@FXML
+	private ListView<Label> dms;
 	
 	@FXML
 	private ListView<Label> chats;
@@ -138,6 +143,7 @@ public class MainStageController implements Initializable{
 		try {
 			ScreenName = Twmain.getScreenName();
 			this.label1.setText(ScreenName);
+			
 		} catch (Exception e) {
 			this.label2.setText("スクリーンネームの取得に失敗しました");
 			e.printStackTrace();
@@ -173,13 +179,18 @@ public class MainStageController implements Initializable{
 		try {
 			List<Status> TimelineStatuses = Twmain.getTimeline(1,Timeline_id);
 			List<Status> MentionStatuses = Twmain.getMentions(1, Mention_id);
+			List<DirectMessage> DMessages = Twmain.getDMs(1,Message_id);
 			Collections.reverse(TimelineStatuses);
 			Collections.reverse(MentionStatuses);
+			Collections.reverse(DMessages);
 			for (Status status : TimelineStatuses) {
 				setTimeline(status);
 			}
 			for(Status status : MentionStatuses){
 				setMention(status);
+			}
+			for(DirectMessage dm : DMessages){
+				setDM(dm);
 			}
 		} catch (Exception e) {
 			this.label2.setText("タイムラインの更新に失敗しました");
@@ -204,6 +215,15 @@ public class MainStageController implements Initializable{
 		mentions.getItems().add(0,label);
 	}
 	
+	public void setDM(DirectMessage dm){
+		Message_id = dm.getId();
+		
+		Label label = new Label();
+		label.setUserData(dm);
+		label.setText(StringController.createDMString(dm));
+		dms.getItems().add(0,label);
+	}
+		
 	@FXML
 	private void onTimelineReply(){
 		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
@@ -306,8 +326,19 @@ public class MainStageController implements Initializable{
 			setChats(OpenUserStatus);
 		} catch (TwitterException e) {
 		}
-		TwitterTab.getSelectionModel().select(2);
+		TwitterTab.getSelectionModel().select(3);
 	}
+	
+    @FXML
+    private void onSetMentionChats(){
+    	MultipleSelectionModel<Label> model = mentions.getSelectionModel(); 
+		Status OpenUserStatus = (Status)model.getSelectedItem().getUserData();
+		try {
+			setChats(OpenUserStatus);
+		} catch (TwitterException e) {
+		}
+		TwitterTab.getSelectionModel().select(3);
+    }
 	
 	private void setChats(Status status) throws TwitterException{
 		chats.getItems().remove(0,chats.getItems().size());

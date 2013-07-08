@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
 
+import twitter4j.DirectMessage;
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -76,6 +77,11 @@ public class TwitterMain {
 	public List<Status> getMentions(int page,long sinceid) throws TwitterException{
 		List<Status> statuses = twitter.getMentionsTimeline(new Paging(1).sinceId(sinceid));
 		return statuses;
+	}
+	
+	public List<DirectMessage> getDMs(int page,long sinceid) throws TwitterException{
+		List<DirectMessage> dms = twitter.getDirectMessages(new Paging(1).sinceId(sinceid));
+		return dms;
 	}
 	
 	public Status getStatus(long Id) throws TwitterException{

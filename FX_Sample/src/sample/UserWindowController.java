@@ -33,11 +33,7 @@ public class UserWindowController {
 
 	
 	public void setUserInfo(TwitterMain tw,User user){
-		if(user.isProtected()){
-			ScreenName.setText("@" + user.getScreenName() + " 🔒");
-		}else{
-			ScreenName.setText("@" + user.getScreenName());
-		}
+		ScreenName.setText(StringController.createScreenNameString(user));
 		UserIntroduction.setText(user.getDescription());
 		Icon.setImage(new Image(user.getProfileImageURL()));	
 		Twmain = tw;

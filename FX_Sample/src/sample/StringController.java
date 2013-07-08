@@ -3,15 +3,37 @@ package sample;
 import java.util.Calendar;
 import java.util.Date;
 
+import twitter4j.DirectMessage;
 import twitter4j.Status;
+import twitter4j.User;
 
 public class StringController {
+	
+	static String createScreenNameString(User user){
+		if(user.isProtected()){
+			return "@" + user.getScreenName() + " - " + user.getName() + " 🔒\n";
+		}else{
+			return "@" + user.getScreenName() + " - " + user.getName() + "\n";
+		}
+	}
 
 	static String createTweetString(Status status){
-		if(status.getUser().isProtected()){
-			return "@" + status.getUser().getScreenName() + " 🔒\n" +  status.getText() + "\n" + returndate(status.getCreatedAt());
+		if(status.isRetweet()){
+			return "@" + status.getRetweetedStatus().getUser().getScreenName() + " - " + status.getRetweetedStatus().getUser().getName() +"\n"+ status.getRetweetedStatus().getText() + "\n" + returndate(status.getRetweetedStatus().getCreatedAt()) + " ReTweeted by @ "+ status.getUser().getScreenName();
 		}else{
-			return "@" + status.getUser().getScreenName() + "\n" +  status.getText() + "\n" + returndate(status.getCreatedAt());
+			if(status.getUser().isProtected()){
+				return "@" + status.getUser().getScreenName() + " - " + status.getUser().getName() + " 🔒\n" +  status.getText() + "\n" + returndate(status.getCreatedAt());
+			}else{
+				return "@" + status.getUser().getScreenName() + " - " + status.getUser().getName() + "\n" +  status.getText() + "\n" + returndate(status.getCreatedAt()); 
+			}
+		}
+	}
+	
+	static String createDMString(DirectMessage dm){
+		if(dm.getSender().isProtected()){
+			return "@" + dm.getSender().getScreenName() + " - " + dm.getSender().getName() + " 🔒\n" +  dm.getText() + "\n" + returndate(dm.getCreatedAt());
+		}else{
+			return "@" + dm.getSender().getScreenName() + " - " + dm.getSender().getName() + "\n" +  dm.getText() + "\n" + returndate(dm.getCreatedAt());
 		}
 	}
 	
