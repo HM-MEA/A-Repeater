@@ -15,6 +15,8 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -44,6 +46,7 @@ public class MainStageController implements Initializable{
 	long Message_id = 1;
 	long reply_id = 0;
 	static String ScreenName;
+	IntegerProperty x = new SimpleIntegerProperty();
 	
 	@FXML
 	private Button button1;
@@ -106,7 +109,7 @@ public class MainStageController implements Initializable{
 					streamcheck.setSelected(false);
 				}
 			}
-		});
+		});	
 		try {
 			TwSmain.startUserStream();
 		} catch (Exception e) {
@@ -201,6 +204,7 @@ public class MainStageController implements Initializable{
 		Timeline_id = status.getId();
 		
 		Label label = new Label();
+		label.setWrapText(true);
 		label.setUserData(status);
 		label.setText(StringController.createTweetString(status));
 		timelines.getItems().add(0,label);

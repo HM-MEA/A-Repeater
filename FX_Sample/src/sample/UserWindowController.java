@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.List;
 
 import twitter4j.Status;
-import twitter4j.TwitterException;
 import twitter4j.User;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 public class UserWindowController {
 	
 	TwitterMain Twmain;
+	User user;
 
 	@FXML
 	private Label ScreenName;
@@ -30,21 +31,25 @@ public class UserWindowController {
 	
 	@FXML
 	private ListView<Label> UserFavorite;
-
 	
-	public void setUserInfo(TwitterMain tw,User user){
+	@FXML
+	private Button followButton;
+
+	public void setUserInfo(TwitterMain tw,User us){
+		user = us;
+		Twmain = tw;
+		
 		ScreenName.setText(StringController.createScreenNameString(user));
 		UserIntroduction.setText(user.getDescription());
-		Icon.setImage(new Image(user.getProfileImageURL()));	
-		Twmain = tw;
+		Icon.setImage(new Image(user.getProfileImageURL()));		
 		try {
 			setTweet(user);
-		} catch (TwitterException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void setTweet(User user) throws TwitterException{
+	public void setTweet(User user) throws Exception{
 		List<Status> UserTweetStatuses = Twmain.getUserTweet(user.getId());
 		List<Status> UserFavoriteStatuses = Twmain.getUserFavorite(user.getId());
 		Collections.reverse(UserTweetStatuses);
@@ -60,6 +65,26 @@ public class UserWindowController {
 			label.setUserData(status);
 			label.setText(StringController.createTweetString(status));
 			UserFavorite.getItems().add(0,label);
+		}
+		if(Twmain.isFollowed(user.getId())){
+			followButton.setText("アンフォロー");
+		}else{
+			followButton.setText("フォロー");
+		}
+	}
+	
+	@FXML
+	private void followc(){
+		try{
+			if(followButton.getText().equals("フォロー")){
+				Twmain.follow(user.getId());
+				followButton.setText("アンフォロー");
+			}else{
+				Twmain.unfollow(user.getId());
+				followButton.setText("フォロー");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 }

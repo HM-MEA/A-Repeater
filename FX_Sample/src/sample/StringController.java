@@ -19,7 +19,7 @@ public class StringController {
 
 	static String createTweetString(Status status){
 		if(status.isRetweet()){
-			return "@" + status.getRetweetedStatus().getUser().getScreenName() + " - " + status.getRetweetedStatus().getUser().getName() +"\n"+ status.getRetweetedStatus().getText() + "\n" + returndate(status.getRetweetedStatus().getCreatedAt()) + " ReTweeted by @ "+ status.getUser().getScreenName();
+			return "@" + status.getRetweetedStatus().getUser().getScreenName() + " - " + status.getRetweetedStatus().getUser().getName() +"\n"+ status.getRetweetedStatus().getText() + "\n" + returndate(status.getRetweetedStatus().getCreatedAt()) + " ReTweeted by @"+ status.getUser().getScreenName();
 		}else{
 			if(status.getUser().isProtected()){
 				return "@" + status.getUser().getScreenName() + " - " + status.getUser().getName() + " 🔒\n" +  status.getText() + "\n" + returndate(status.getCreatedAt());

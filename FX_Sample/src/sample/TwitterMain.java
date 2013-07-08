@@ -87,4 +87,19 @@ public class TwitterMain {
 	public Status getStatus(long Id) throws TwitterException{
 		return twitter.showStatus(Id);
 	}
+	
+	public boolean isFollowed(long id) throws Exception{
+		if(twitter.showFriendship(twitter.getId(), id).isTargetFollowedBySource()){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public void follow(long id) throws TwitterException{
+		twitter.createFriendship(id);
+	}
+	public void unfollow(long id) throws TwitterException{
+		twitter.destroyFriendship(id);
+	}
 }

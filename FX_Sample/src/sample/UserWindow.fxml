@@ -7,12 +7,12 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="249.5" xmlns:fx="http://javafx.com/fxml" fx:controller="sample.UserWindowController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.000199999995" prefWidth="249.5" xmlns:fx="http://javafx.com/fxml" fx:controller="sample.UserWindowController">
   <children>
     <Label id="Screen" fx:id="ScreenName" alignment="TOP_LEFT" layoutY="84.0" prefWidth="221.99990000000253" AnchorPane.leftAnchor="14.17" AnchorPane.rightAnchor="13.33" />
-    <Label fx:id="UserIntroduction" alignment="TOP_LEFT" layoutY="110.0" prefHeight="80.0" prefWidth="216.5" textFill="#292929" textOverrun="CLIP" wrapText="true" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="13.5" />
+    <Label fx:id="UserIntroduction" alignment="TOP_LEFT" prefWidth="225.0" textFill="#292929" textOverrun="CLIP" wrapText="true" AnchorPane.leftAnchor="12.67" AnchorPane.rightAnchor="11.83" AnchorPane.topAnchor="107.0" />
     <ImageView id="icon" fx:id="Icon" fitHeight="60.0" fitWidth="60.333335876464844" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="95.0" AnchorPane.rightAnchor="94.17" AnchorPane.topAnchor="14.0" />
-    <TabPane prefHeight="280.0" prefWidth="222.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="13.5" AnchorPane.topAnchor="206.0">
+    <TabPane prefHeight="330.0000002384186" prefWidth="224.5" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="255.0">
       <tabs>
         <Tab closable="false" text="Tweet">
           <content>
@@ -26,5 +26,6 @@
         </Tab>
       </tabs>
     </TabPane>
+    <Button fx:id="followButton" mnemonicParsing="false" onAction="#followc" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="224.0" />
   </children>
 </AnchorPane>
