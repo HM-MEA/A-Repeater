@@ -16,6 +16,8 @@ public class UserWindowController {
 	
 	TwitterMain Twmain;
 	User user;
+	List<Status> UserTweetStatuses;
+	List<Status> UserFavoriteStatuses;
 
 	@FXML
 	private Label ScreenName;
@@ -50,8 +52,8 @@ public class UserWindowController {
 	}
 	
 	public void setTweet(User user) throws Exception{
-		List<Status> UserTweetStatuses = Twmain.getUserTweet(user.getId());
-		List<Status> UserFavoriteStatuses = Twmain.getUserFavorite(user.getId());
+		UserTweetStatuses = Twmain.getUserTweet(user.getId());
+		UserFavoriteStatuses = Twmain.getUserFavorite(user.getId());
 		Collections.reverse(UserTweetStatuses);
 		Collections.reverse(UserFavoriteStatuses);
 		for (Status status : UserTweetStatuses) {

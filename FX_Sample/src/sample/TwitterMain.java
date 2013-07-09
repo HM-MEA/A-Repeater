@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
 
+import javafx.concurrent.Task;
+
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -41,22 +43,54 @@ public class TwitterMain {
 		return ScreenName;
 	}
 	
-	public void postTweet(String str) throws TwitterException{
-		twitter.updateStatus(str);
+	public void postTweet(final String str) throws TwitterException{
+		Task<Status> task = new Task<Status>(){
+			@Override
+			protected Status call() throws Exception {
+				return twitter.updateStatus(str);			
+			}
+		};
+		Thread t = new Thread(task);
+		t.setDaemon(true);
+		t.start();
 	}
 	
-	public void postTweet(String str,long reply_id) throws TwitterException{
-		StatusUpdate update = new StatusUpdate(str);
-		update.setInReplyToStatusId(reply_id);
-		twitter.updateStatus(update);
+	public void postTweet(final String str,final long reply_id) throws TwitterException{
+		Task<Status> task = new Task<Status>(){
+			@Override
+			protected Status call() throws Exception {
+				StatusUpdate update = new StatusUpdate(str);
+				update.setInReplyToStatusId(reply_id);
+				return twitter.updateStatus(update);			
+			}
+		};
+		Thread t = new Thread(task);
+		t.setDaemon(true);
+		t.start();
 	}
 	
-	public void retweet(Status status) throws TwitterException{
-		twitter.retweetStatus(status.getId());
+	public void retweet(final Status status) throws TwitterException{
+		Task<Status> task = new Task<Status>(){
+			@Override
+			protected Status call() throws Exception {
+				return 	twitter.retweetStatus(status.getId());
+			}
+		};
+		Thread t = new Thread(task);
+		t.setDaemon(true);
+		t.start();
 	}
 	
-	public void favorite(Status status) throws TwitterException{
-		twitter.createFavorite(status.getId());
+	public void favorite(final Status status) throws TwitterException{
+		Task<Status> task = new Task<Status>(){
+			@Override
+			protected Status call() throws Exception {
+				return 	twitter.createFavorite(status.getId());
+			}
+		};
+		Thread t = new Thread(task);
+		t.setDaemon(true);
+		t.start();
 	}
 	
 	public List<Status> getUserTweet(long userid) throws TwitterException{

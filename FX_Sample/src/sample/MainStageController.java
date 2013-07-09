@@ -318,11 +318,11 @@ public class MainStageController implements Initializable{
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("UserWindow.fxml"));
 			Parent Aroot = (Parent)loader.load();
-			UserWindowController controller = loader.getController();
-			controller.setUserInfo(Twmain,status.getUser());
 			Scene Ascene = new Scene(Aroot);
 			AStage.setScene(Ascene);
 			AStage.show();
+			UserWindowController controller = loader.getController();
+			controller.setUserInfo(Twmain,status.getUser());		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
