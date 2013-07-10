@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 
 import twitter4j.DirectMessage;
@@ -22,6 +24,10 @@ public class TwitterMain {
 	Status firststatus;
 	File Keyfile = new File("CunsumerKey.txt");
 	Scanner scan;
+	
+	ObjectProperty<List<Status>> TimelineStatuses = new SimpleObjectProperty<List<Status>>();
+	ObjectProperty<List<Status>> MentionStatuses = new SimpleObjectProperty<List<Status>>();
+	ObjectProperty<List<DirectMessage>> DMessages = new SimpleObjectProperty<List<DirectMessage>>();
 	
 	TwitterMain(){
 		twitter = TwitterFactory.getSingleton();
@@ -103,19 +109,52 @@ public class TwitterMain {
 		return statuses;
 	}
 			
-	public List<Status> getTimeline(int page,long sinceid) throws TwitterException{
-		List<Status> statuses =  twitter.getHomeTimeline(new Paging(1).sinceId(sinceid));
-		return statuses;
+	public void getTimeline(int page,final long sinceid) throws TwitterException{
+		Task<List<Status>> task = new Task<List<Status>>(){
+			@Override
+			protected List<Status> call() throws Exception {
+				return twitter.getHomeTimeline(new Paging(1).sinceId(sinceid));
+			}
+			@Override
+			protected void succeeded(){
+				TimelineStatuses.set(getValue());
+			}
+		};
+		Thread t = new Thread(task);
+		t.setDaemon(true);
+		t.start();
 	}
 	
-	public List<Status> getMentions(int page,long sinceid) throws TwitterException{
-		List<Status> statuses = twitter.getMentionsTimeline(new Paging(1).sinceId(sinceid));
-		return statuses;
+	public void getMentions(int page,final long sinceid) throws TwitterException{
+		Task<List<Status>> task = new Task<List<Status>>(){
+			@Override
+			protected List<Status> call() throws Exception {
+				return twitter.getMentionsTimeline(new Paging(1).sinceId(sinceid));
+			}
+			@Override
+			protected void succeeded(){
+				MentionStatuses.set(getValue());
+			}
+		};
+		Thread t = new Thread(task);
+		t.setDaemon(true);
+		t.start();
 	}
 	
-	public List<DirectMessage> getDMs(int page,long sinceid) throws TwitterException{
-		List<DirectMessage> dms = twitter.getDirectMessages(new Paging(1).sinceId(sinceid));
-		return dms;
+	public void getDMs(int page,final long sinceid) throws TwitterException{
+		Task<List<DirectMessage>> task = new Task<List<DirectMessage>>(){
+			@Override
+			protected List<DirectMessage> call() throws Exception {
+				return twitter.getDirectMessages(new Paging(1).sinceId(sinceid));
+			}
+			@Override
+			protected void succeeded(){
+				DMessages.set(getValue());
+			}
+		};
+		Thread t = new Thread(task);
+		t.setDaemon(true);
+		t.start();
 	}
 	
 	public Status getStatus(long Id) throws TwitterException{

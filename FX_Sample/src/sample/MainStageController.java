@@ -87,6 +87,24 @@ public class MainStageController implements Initializable{
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		readTokenfile();
+		Twmain.TimelineStatuses.addListener(new ChangeListener<List<Status>>(){
+			@Override
+			public void changed(ObservableValue<? extends List<Status>> arg0,List<Status> arg1, List<Status> arg2) {
+				updateTimeline(arg2);
+			}
+		});
+		Twmain.MentionStatuses.addListener(new ChangeListener<List<Status>>(){
+			@Override
+			public void changed(ObservableValue<? extends List<Status>> arg0,List<Status> arg1, List<Status> arg2) {
+				updateMention(arg2);
+			}
+		});
+		Twmain.DMessages.addListener(new ChangeListener<List<DirectMessage>>(){
+			@Override
+			public void changed(ObservableValue<? extends List<DirectMessage>> arg0,List<DirectMessage> arg1, List<DirectMessage> arg2) {
+				updateDM(arg2);
+			}
+		});
 		onUpdateTimelines();
 		TwSmain.timeline_status.addListener(new ChangeListener<Status>(){
 			@Override
@@ -186,23 +204,32 @@ public class MainStageController implements Initializable{
 	@FXML
 	private void onUpdateTimelines(){
 		try {
-			List<Status> TimelineStatuses = Twmain.getTimeline(1,Timeline_id);
-			List<Status> MentionStatuses = Twmain.getMentions(1, Mention_id);
-			List<DirectMessage> DMessages = Twmain.getDMs(1,Message_id);
-			Collections.reverse(TimelineStatuses);
-			Collections.reverse(MentionStatuses);
-			Collections.reverse(DMessages);
-			for (Status status : TimelineStatuses) {
-				setTimeline(status);
-			}
-			for(Status status : MentionStatuses){
-				setMention(status);
-			}
-			for(DirectMessage dm : DMessages){
-				setDM(dm);
-			}
-		} catch (Exception e) {
-			this.label2.setText("タイムラインの更新に失敗しました");
+			Twmain.getTimeline(1, Timeline_id);
+			Twmain.getMentions(1, Mention_id);
+			Twmain.getDMs(1, Message_id);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void updateTimeline(List<Status> statuses){
+		Collections.reverse(statuses);
+		for (Status status : statuses) {
+			setTimeline(status);
+		}
+	}
+	
+	private void updateMention(List<Status> statuses){
+		Collections.reverse(statuses);
+		for(Status status : statuses){
+			setMention(status);
+		}
+	}
+	
+	private void updateDM(List<DirectMessage> messages){
+		Collections.reverse(messages);	
+		for(DirectMessage dm : messages){
+			setDM(dm);
 		}
 	}
 	
