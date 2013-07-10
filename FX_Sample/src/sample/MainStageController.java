@@ -134,6 +134,12 @@ public class MainStageController implements Initializable{
 				}
 			}
 		});	
+		Twmain.ChatStatuses.addListener(new ChangeListener<ArrayList<Status>>(){
+			@Override
+			public void changed(ObservableValue<? extends ArrayList<Status>> arg0,ArrayList<Status> arg1, ArrayList<Status> arg2) {
+				setChats(arg2);
+			}
+		});
 		try {
 			TwSmain.startUserStream();
 		} catch (Exception e) {
@@ -260,7 +266,7 @@ public class MainStageController implements Initializable{
 		label.setText(StringController.createDMString(dm));
 		dms.getItems().add(0,label);
 	}
-		
+			
 	@FXML
 	private void onTimelineReply(){
 		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
@@ -359,10 +365,8 @@ public class MainStageController implements Initializable{
 	private void onSetTimelineChats(){
 		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
 		Status OpenUserStatus = (Status)model.getSelectedItem().getUserData();
-		try {
-			setChats(OpenUserStatus);
-		} catch (TwitterException e) {
-		}
+		chats.getItems().remove(0,chats.getItems().size());
+		Twmain.getChats(OpenUserStatus);
 		TwitterTab.getSelectionModel().select(3);
 	}
 	
@@ -370,23 +374,18 @@ public class MainStageController implements Initializable{
     private void onSetMentionChats(){
     	MultipleSelectionModel<Label> model = mentions.getSelectionModel(); 
 		Status OpenUserStatus = (Status)model.getSelectedItem().getUserData();
-		try {
-			setChats(OpenUserStatus);
-		} catch (TwitterException e) {
-		}
+		chats.getItems().remove(0,chats.getItems().size());
+		Twmain.getChats(OpenUserStatus);
 		TwitterTab.getSelectionModel().select(3);
     }
 	
-	private void setChats(Status status) throws TwitterException{
-		chats.getItems().remove(0,chats.getItems().size());
-		long chatsId = status.getId();
-		while(chatsId != 0){
-			Status replystatus = Twmain.getStatus(chatsId);
-			chats.setUserData(replystatus);
+	private void setChats(ArrayList<Status> statuses){
+		Collections.reverse(statuses);	
+		for(Status status:statuses){
 			Label label = new Label();
-			label.setText(StringController.createTweetString(replystatus));
+			label.setUserData(status);
+			label.setText(StringController.createTweetString(status));
 			chats.getItems().add(0,label);
-			chatsId = replystatus.getInReplyToStatusId();
 		}
 	}
 	

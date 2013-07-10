@@ -2,6 +2,7 @@ package sample;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -28,6 +29,7 @@ public class TwitterMain {
 	ObjectProperty<List<Status>> TimelineStatuses = new SimpleObjectProperty<List<Status>>();
 	ObjectProperty<List<Status>> MentionStatuses = new SimpleObjectProperty<List<Status>>();
 	ObjectProperty<List<DirectMessage>> DMessages = new SimpleObjectProperty<List<DirectMessage>>();
+	ObjectProperty<ArrayList<Status>> ChatStatuses = new SimpleObjectProperty<ArrayList<Status>>();
 	
 	TwitterMain(){
 		twitter = TwitterFactory.getSingleton();
@@ -150,6 +152,33 @@ public class TwitterMain {
 			@Override
 			protected void succeeded(){
 				DMessages.set(getValue());
+			}
+		};
+		Thread t = new Thread(task);
+		t.setDaemon(true);
+		t.start();
+	}
+	
+	public void getChats(final Status status){
+		Task<ArrayList<Status>> task = new Task<ArrayList<Status>>(){
+
+			@Override
+			protected ArrayList<Status> call() throws Exception {
+				ArrayList<Status> Chats = new ArrayList<Status>();
+				long chatsId = status.getId();
+				try {
+					while(chatsId != 0){
+						Status replystatus = twitter.showStatus(chatsId);		
+						Chats.add(replystatus);
+						chatsId = replystatus.getInReplyToStatusId();
+					}
+				}catch(TwitterException e) {
+				}
+				return Chats;
+			}
+			@Override
+			protected void succeeded(){
+				ChatStatuses.set(getValue());
 			}
 		};
 		Thread t = new Thread(task);
