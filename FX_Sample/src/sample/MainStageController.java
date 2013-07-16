@@ -27,11 +27,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -46,6 +51,7 @@ public class MainStageController implements Initializable{
 	long Message_id = 1;
 	long reply_id = 0;
 	static String ScreenName;
+	File image = null;
 	IntegerProperty x = new SimpleIntegerProperty();
 	
 	@FXML
@@ -84,18 +90,24 @@ public class MainStageController implements Initializable{
 	@FXML
 	private TabPane TwitterTab;
 	
+	@FXML
+	private Label imagename;
+	
+	@FXML
+	private Button addimage;
+	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		readTokenfile();
-		Twmain.TimelineStatuses.addListener(new ChangeListener<List<Status>>(){
+		Twmain.TimelineStatuses.addListener(new ChangeListener<List<Exstatus>>(){
 			@Override
-			public void changed(ObservableValue<? extends List<Status>> arg0,List<Status> arg1, List<Status> arg2) {
+			public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
 				updateTimeline(arg2);
 			}
 		});
-		Twmain.MentionStatuses.addListener(new ChangeListener<List<Status>>(){
+		Twmain.MentionStatuses.addListener(new ChangeListener<List<Exstatus>>(){
 			@Override
-			public void changed(ObservableValue<? extends List<Status>> arg0,List<Status> arg1, List<Status> arg2) {
+			public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
 				updateMention(arg2);
 			}
 		});
@@ -106,15 +118,15 @@ public class MainStageController implements Initializable{
 			}
 		});
 		onUpdateTimelines();
-		TwSmain.timeline_status.addListener(new ChangeListener<Status>(){
+		TwSmain.timeline_status.addListener(new ChangeListener<Exstatus>(){
 			@Override
-			public void changed(ObservableValue<? extends Status> arg0,	Status arg1, Status arg2) {
+			public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1,Exstatus arg2) {
 				setTimeline(arg2);
 			}
 		});
-		TwSmain.mention_status.addListener(new ChangeListener<Status>(){
+		TwSmain.mention_status.addListener(new ChangeListener<Exstatus>(){
 			@Override
-			public void changed(ObservableValue<? extends Status> arg0,	Status arg1, Status arg2) {
+			public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1,Exstatus arg2) {
 				setMention(arg2);
 			}
 		});
@@ -134,9 +146,9 @@ public class MainStageController implements Initializable{
 				}
 			}
 		});	
-		Twmain.ChatStatuses.addListener(new ChangeListener<ArrayList<Status>>(){
+		Twmain.ChatStatuses.addListener(new ChangeListener<ArrayList<Exstatus>>(){
 			@Override
-			public void changed(ObservableValue<? extends ArrayList<Status>> arg0,ArrayList<Status> arg1, ArrayList<Status> arg2) {
+			public void changed(ObservableValue<? extends ArrayList<Exstatus>> arg0,ArrayList<Exstatus> arg1, ArrayList<Exstatus> arg2) {
 				setChats(arg2);
 			}
 		});
@@ -145,6 +157,7 @@ public class MainStageController implements Initializable{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		imagename.setVisible(false);
 	}
 	
 	@FXML
@@ -186,20 +199,33 @@ public class MainStageController implements Initializable{
 	@FXML
 	protected void postTweet(){
 		String str = this.textarea.getText();
-		if(str.length() > 0){
-			try {
-				if(reply_id == 0){
-					Twmain.postTweet(str);
+	
+		try {
+			if(reply_id == 0){
+				if(image == null){
+					if(str.length() > 0){
+						Twmain.postTweet(str);
+					}else{
+						throw new TwitterException("");
+					}
 				}else{
-					Twmain.postTweet(str, reply_id);
+					Twmain.postTweet(str, image);
 				}
-			this.label2.setText("ìäçeÇµÇ‹ÇµÇΩ");
-			} catch (TwitterException e) {
-				this.label2.setText("ìäçeÇ…é∏îsÇµÇ‹ÇµÇΩ");
+			}else{
+				if(image == null){
+					Twmain.postTweet(str, reply_id);
+				}else{
+					Twmain.postTweet(str, reply_id, image);
+				}
 			}
+			this.label2.setText("ìäçeÇµÇ‹ÇµÇΩ");
+		} catch (TwitterException e) {
+			this.label2.setText("ìäçeÇ…é∏îsÇµÇ‹ÇµÇΩ");
 		}
+		
 		this.textarea.setText("");
 		reply_id = 0;
+		onRemoveImage();
 	}
 	
 	public void setToken(){
@@ -218,16 +244,16 @@ public class MainStageController implements Initializable{
 		}
 	}
 	
-	private void updateTimeline(List<Status> statuses){
+	private void updateTimeline(List<Exstatus> statuses){
 		Collections.reverse(statuses);
-		for (Status status : statuses) {
+		for (Exstatus status : statuses) {
 			setTimeline(status);
 		}
 	}
 	
-	private void updateMention(List<Status> statuses){
+	private void updateMention(List<Exstatus> statuses){
 		Collections.reverse(statuses);
-		for(Status status : statuses){
+		for(Exstatus status : statuses){
 			setMention(status);
 		}
 	}
@@ -239,22 +265,31 @@ public class MainStageController implements Initializable{
 		}
 	}
 	
-	public void setTimeline(Status status){
-		Timeline_id = status.getId();
+	public void setTimeline(Exstatus status){
+		Timeline_id = status.getStatus().getId();
 		
 		Label label = new Label();
 		label.setWrapText(true);
-		label.setUserData(status);
-		label.setText(StringController.createTweetString(status));
-		timelines.getItems().add(0,label);
+		if(status.getStatus().isRetweet()){
+			label.setUserData(status.getStatus().getRetweetedStatus());
+		}else{
+			label.setUserData(status.getStatus());
+		}
+		label.setText(StringController.createTweetString(status.getStatus()));
+		label.setGraphic(new ImageView(status.getImage()));
+		label.setContentDisplay(ContentDisplay.LEFT);
+		timelines.getItems().add(0,label);		
 	}
 	
-	public void setMention(Status status){
-		Mention_id = status.getId();
-		
+	public void setMention(Exstatus status){
+		Mention_id = status.getStatus().getId();
+				
 		Label label = new Label();
-		label.setUserData(status);
-		label.setText(StringController.createTweetString(status));
+		label.setWrapText(true);
+		label.setUserData(status.getStatus());
+		label.setText(StringController.createTweetString(status.getStatus()));
+		label.setGraphic(new ImageView(status.getImage()));
+		label.setContentDisplay(ContentDisplay.LEFT);
 		mentions.getItems().add(0,label);
 	}
 	
@@ -379,14 +414,23 @@ public class MainStageController implements Initializable{
 		TwitterTab.getSelectionModel().select(3);
     }
 	
-	private void setChats(ArrayList<Status> statuses){
+	private void setChats(ArrayList<Exstatus> statuses){
 		Collections.reverse(statuses);	
-		for(Status status:statuses){
-			Label label = new Label();
-			label.setUserData(status);
-			label.setText(StringController.createTweetString(status));
-			chats.getItems().add(0,label);
+		for(Exstatus status:statuses){
+			setChatData(status);
 		}
+	}
+	
+	private void setChatData(Exstatus status){
+		
+		Label label = new Label();
+		label.setWrapText(true);
+		label.setUserData(status);
+		label.setText(StringController.createTweetString(status.getStatus()));
+		label.setGraphic(new ImageView(status.getImage()));
+		label.setContentDisplay(ContentDisplay.LEFT);
+		chats.getItems().add(0,label);
+
 	}
 	
 	@FXML
@@ -402,6 +446,31 @@ public class MainStageController implements Initializable{
 			TwSmain.stopStream();
 			this.label2.setText("streamÇêÿífÇµÇ‹ÇµÇΩ");
 		}
+	}
+	
+	@FXML
+	private void onAddImage(){
+		FileChooser fc = new FileChooser();
+		fc.setTitle("ìYïtâÊëúÇÃëIë");
+		fc.setInitialDirectory(new File(System.getProperty("user.home")));
+		fc.getExtensionFilters().add(new ExtensionFilter("jpg,png,gif","*.jpg", "*.png","*.gif"));
+		image = fc.showOpenDialog(null);
+		try {
+			ImageView uploadimage = new ImageView(new Image(image.toURI().toURL().toString()));
+			uploadimage.setPreserveRatio(true);
+			uploadimage.setFitHeight(20);
+			imagename.setText("ìYïtâÊëú  : " + image.getName());
+			imagename.setGraphic(uploadimage);
+			imagename.setVisible(true);
+		} catch (Exception e) {
+		}
+		
+	}
+	
+	@FXML
+	private void onRemoveImage(){
+		image = null;
+		imagename.setVisible(false);
 	}
 	
 	@FXML

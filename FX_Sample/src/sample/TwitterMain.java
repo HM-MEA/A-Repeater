@@ -8,7 +8,9 @@ import java.util.Scanner;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.image.Image;
 
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
@@ -19,17 +21,17 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 
-public class TwitterMain {
+public class TwitterMain{
 
 	Twitter twitter;
 	Status firststatus;
 	File Keyfile = new File("CunsumerKey.txt");
 	Scanner scan;
 	
-	ObjectProperty<List<Status>> TimelineStatuses = new SimpleObjectProperty<List<Status>>();
-	ObjectProperty<List<Status>> MentionStatuses = new SimpleObjectProperty<List<Status>>();
+	ObjectProperty<List<Exstatus>> TimelineStatuses = new SimpleObjectProperty<List<Exstatus>>();
+	ObjectProperty<List<Exstatus>> MentionStatuses = new SimpleObjectProperty<List<Exstatus>>();
 	ObjectProperty<List<DirectMessage>> DMessages = new SimpleObjectProperty<List<DirectMessage>>();
-	ObjectProperty<ArrayList<Status>> ChatStatuses = new SimpleObjectProperty<ArrayList<Status>>();
+	ObjectProperty<ArrayList<Exstatus>> ChatStatuses = new SimpleObjectProperty<ArrayList<Exstatus>>();
 	
 	TwitterMain(){
 		twitter = TwitterFactory.getSingleton();
@@ -52,29 +54,74 @@ public class TwitterMain {
 	}
 	
 	public void postTweet(final String str) throws TwitterException{
-		Task<Status> task = new Task<Status>(){
+		Service<Status> s = new Service<Status>(){
 			@Override
-			protected Status call() throws Exception {
-				return twitter.updateStatus(str);			
+			protected Task<Status> createTask(){
+				Task<Status> task = new Task<Status>() {
+		            @Override
+		            protected Status call() throws Exception {
+		            	return twitter.updateStatus(str); 
+		            }
+		        };
+				return task;
 			}
 		};
-		Thread t = new Thread(task);
-		t.setDaemon(true);
-		t.start();
+		s.start();
 	}
 	
 	public void postTweet(final String str,final long reply_id) throws TwitterException{
-		Task<Status> task = new Task<Status>(){
+		Service<Status> s = new Service<Status>(){
 			@Override
-			protected Status call() throws Exception {
-				StatusUpdate update = new StatusUpdate(str);
-				update.setInReplyToStatusId(reply_id);
-				return twitter.updateStatus(update);			
+			protected Task<Status> createTask(){
+				Task<Status> task = new Task<Status>() {
+		            @Override
+		            protected Status call() throws Exception {
+		            	StatusUpdate update = new StatusUpdate(str);
+						update.setInReplyToStatusId(reply_id);
+						return twitter.updateStatus(update);	
+		            }
+		        };
+				return task;
 			}
 		};
-		Thread t = new Thread(task);
-		t.setDaemon(true);
-		t.start();
+		s.start();
+	}
+	
+	public void postTweet(final String str,final File f){
+		Service<Status> s = new Service<Status>(){
+			@Override
+			protected Task<Status> createTask(){
+				Task<Status> task = new Task<Status>() {
+		            @Override
+		            protected Status call() throws Exception {
+		            	StatusUpdate update = new StatusUpdate(str);
+						update.setMedia(f);
+						return twitter.updateStatus(update);	
+		            }
+		        };
+				return task;
+			}
+		};
+		s.start();
+	}
+	
+	public void postTweet(final String str,final long reply_id,final File f){
+		Service<Status> s = new Service<Status>(){
+			@Override
+			protected Task<Status> createTask(){
+				Task<Status> task = new Task<Status>() {
+		            @Override
+		            protected Status call() throws Exception {
+		            	StatusUpdate update = new StatusUpdate(str);
+						update.setMedia(f);
+						update.setInReplyToStatusId(reply_id);
+						return twitter.updateStatus(update);	
+		            }
+		        };
+				return task;
+			}
+		};
+		s.start();
 	}
 	
 	public void retweet(final Status status) throws TwitterException{
@@ -111,36 +158,65 @@ public class TwitterMain {
 		return statuses;
 	}
 			
-	public void getTimeline(int page,final long sinceid) throws TwitterException{
-		Task<List<Status>> task = new Task<List<Status>>(){
+	public void getTimeline(final int page,final long sinceid) throws TwitterException{
+		Service<List<Exstatus>> s = new Service<List<Exstatus>>(){
 			@Override
-			protected List<Status> call() throws Exception {
-				return twitter.getHomeTimeline(new Paging(1).sinceId(sinceid));
-			}
-			@Override
-			protected void succeeded(){
-				TimelineStatuses.set(getValue());
+			protected Task<List<Exstatus>> createTask(){
+				Task<List<Exstatus>> task = new Task<List<Exstatus>>() {
+		            @Override
+		            protected List<Exstatus> call() throws Exception {
+		            	List<Exstatus> statuses = new ArrayList<Exstatus>();
+		            	List<Status> list = twitter.getHomeTimeline(new Paging(page).sinceId(sinceid));
+		            	for(Status status:list){
+		            		Exstatus e = new Exstatus();
+		            		e.setStatus(status);
+		            		if(status.isRetweet()){
+		            			e.setImage(new Image(status.getRetweetedStatus().getUser().getMiniProfileImageURL()));
+
+		            		}else{
+		            			e.setImage(new Image(status.getUser().getMiniProfileImageURL()));
+		            		}		  
+		            		statuses.add(e);
+		            	}
+		            	return statuses;
+		            }
+		            @Override
+		            protected void succeeded(){
+		            	TimelineStatuses.set(getValue());
+		            }
+		        };
+				return task;
 			}
 		};
-		Thread t = new Thread(task);
-		t.setDaemon(true);
-		t.start();
+		s.start();
 	}
 	
-	public void getMentions(int page,final long sinceid) throws TwitterException{
-		Task<List<Status>> task = new Task<List<Status>>(){
+	public void getMentions(final int page,final long sinceid) throws TwitterException{
+		Service<List<Exstatus>> s = new Service<List<Exstatus>>(){
 			@Override
-			protected List<Status> call() throws Exception {
-				return twitter.getMentionsTimeline(new Paging(1).sinceId(sinceid));
-			}
-			@Override
-			protected void succeeded(){
-				MentionStatuses.set(getValue());
+			protected Task<List<Exstatus>> createTask(){
+				Task<List<Exstatus>> task = new Task<List<Exstatus>>() {
+		            @Override
+		            protected List<Exstatus> call() throws Exception {
+		            	List<Exstatus> statuses = new ArrayList<Exstatus>();
+		            	List<Status> list = twitter.getMentionsTimeline(new Paging(page).sinceId(sinceid));
+		            	for(Status status:list){
+		            		Exstatus e = new Exstatus();
+		            		e.setStatus(status);
+		            		e.setImage(new Image(status.getUser().getMiniProfileImageURL()));
+		            		statuses.add(e);
+		            	}
+		            	return statuses;
+		            }
+		            @Override
+		            protected void succeeded(){
+		            	MentionStatuses.set(getValue());
+		            }
+		        };
+				return task;
 			}
 		};
-		Thread t = new Thread(task);
-		t.setDaemon(true);
-		t.start();
+		s.start();
 	}
 	
 	public void getDMs(int page,final long sinceid) throws TwitterException{
@@ -160,30 +236,36 @@ public class TwitterMain {
 	}
 	
 	public void getChats(final Status status){
-		Task<ArrayList<Status>> task = new Task<ArrayList<Status>>(){
-
+		Service<ArrayList<Exstatus>> s = new Service<ArrayList<Exstatus>>(){
 			@Override
-			protected ArrayList<Status> call() throws Exception {
-				ArrayList<Status> Chats = new ArrayList<Status>();
-				long chatsId = status.getId();
-				try {
-					while(chatsId != 0){
-						Status replystatus = twitter.showStatus(chatsId);		
-						Chats.add(replystatus);
-						chatsId = replystatus.getInReplyToStatusId();
-					}
-				}catch(TwitterException e) {
-				}
-				return Chats;
-			}
-			@Override
-			protected void succeeded(){
-				ChatStatuses.set(getValue());
+			protected Task<ArrayList<Exstatus>> createTask(){
+				Task<ArrayList<Exstatus>> task = new Task<ArrayList<Exstatus>>() {
+		            @Override
+		            protected ArrayList<Exstatus> call() throws Exception {
+		            	ArrayList<Exstatus> Chats = new ArrayList<Exstatus>();
+						long chatsId = status.getId();
+						try{
+							while(chatsId != 0){
+								Status replystatus = twitter.showStatus(chatsId);
+								Exstatus e = new Exstatus();
+								e.setStatus(replystatus);
+								e.setImage(new Image(replystatus.getUser().getMiniProfileImageURL()));
+								Chats.add(e);
+								chatsId = replystatus.getInReplyToStatusId();
+							}
+						}catch(Exception e){
+						}
+		            	return Chats;
+		            }
+		            @Override
+		            protected void succeeded(){
+		            	ChatStatuses.set(getValue());
+		            }
+		        };
+				return task;
 			}
 		};
-		Thread t = new Thread(task);
-		t.setDaemon(true);
-		t.start();
+		s.start();
 	}
 	
 	public Status getStatus(long Id) throws TwitterException{

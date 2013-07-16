@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.image.Image;
 
 import twitter4j.DirectMessage;
 import twitter4j.Status;
@@ -24,8 +24,8 @@ public class TwitterStreamMain {
 	File Keyfile = new File("CunsumerKey.txt");
 	Scanner scan;
 	String ScreenName;
-	ObjectProperty<Status> timeline_status = new SimpleObjectProperty<Status>();
-	ObjectProperty<Status> mention_status = new SimpleObjectProperty<Status>();
+	ObjectProperty<Exstatus> timeline_status = new SimpleObjectProperty<Exstatus>();
+	ObjectProperty<Exstatus> mention_status = new SimpleObjectProperty<Exstatus>();
 	ObjectProperty<DirectMessage> dmessage = new SimpleObjectProperty<DirectMessage>();
 	IntegerProperty stream_f = new SimpleIntegerProperty();
 
@@ -58,18 +58,32 @@ public class TwitterStreamMain {
 	public void stopStream(){
 		twitterstream.shutdown();
 	}
+	
+	public void setTimeline(Status status){
+		Exstatus e = new Exstatus();
+		e.setStatus(status);
+		if(status.isRetweet()){
+			e.setImage(new Image(status.getRetweetedStatus().getUser().getMiniProfileImageURL()));
+
+		}else{
+			e.setImage(new Image(status.getUser().getMiniProfileImageURL()));
+		}
+		timeline_status.set(e);
+	}
+	
+	public void setMention(Status status){
+		Exstatus e = new Exstatus();
+		e.setStatus(status);
+		e.setImage(new Image(status.getUser().getMiniProfileImageURL()));
+		mention_status.set(e);
+	}
 		
 	class MyUserStreamAdapter extends UserStreamAdapter{
-		public void onStatus(final Status status){
-			Platform.runLater(new Runnable(){
-				@Override
-				public void run(){
-					if(status.getText().contains(ScreenName)){
-						mention_status.set(status);
-					}
-					timeline_status.set(status);
-				}
-			});
+		public void onStatus(final Status status){	
+			if(status.getText().contains(ScreenName)){
+				setMention(status);
+			}
+			setTimeline(status);		
 		}
 		public void onFavorite(User source, User target,Status favoritedStatus){
 			System.out.println(source.getScreenName() + "‚ª" + target.getScreenName() + "‚Ì" + favoritedStatus.getText() + "‚ð‚¨‹C‚É“ü‚è‚É“o˜^‚µ‚Ü‚µ‚½");	
