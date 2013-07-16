@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -32,6 +34,8 @@ public class TwitterMain{
 	ObjectProperty<List<Exstatus>> MentionStatuses = new SimpleObjectProperty<List<Exstatus>>();
 	ObjectProperty<List<DirectMessage>> DMessages = new SimpleObjectProperty<List<DirectMessage>>();
 	ObjectProperty<ArrayList<Exstatus>> ChatStatuses = new SimpleObjectProperty<ArrayList<Exstatus>>();
+	
+	IntegerProperty indicator = new SimpleIntegerProperty();
 	
 	TwitterMain(){
 		twitter = TwitterFactory.getSingleton();
@@ -62,10 +66,15 @@ public class TwitterMain{
 		            protected Status call() throws Exception {
 		            	return twitter.updateStatus(str); 
 		            }
+		            @Override
+		            protected void succeeded(){
+		            	indicator.set(0);
+		            }
 		        };
 				return task;
 			}
 		};
+    	indicator.set(-1);
 		s.start();
 	}
 	
@@ -80,10 +89,15 @@ public class TwitterMain{
 						update.setInReplyToStatusId(reply_id);
 						return twitter.updateStatus(update);	
 		            }
+		            @Override
+		            protected void succeeded(){
+		            	indicator.set(0);
+		            }
 		        };
 				return task;
 			}
 		};
+    	indicator.set(-1);
 		s.start();
 	}
 	
@@ -98,10 +112,15 @@ public class TwitterMain{
 						update.setMedia(f);
 						return twitter.updateStatus(update);	
 		            }
+		            @Override
+		            protected void succeeded(){
+		            	indicator.set(0);
+		            }
 		        };
 				return task;
 			}
 		};
+    	indicator.set(-1);
 		s.start();
 	}
 	
@@ -117,10 +136,15 @@ public class TwitterMain{
 						update.setInReplyToStatusId(reply_id);
 						return twitter.updateStatus(update);	
 		            }
+		            @Override
+		            protected void succeeded(){
+		            	indicator.set(0);
+		            }
 		        };
 				return task;
 			}
 		};
+    	indicator.set(-1);
 		s.start();
 	}
 	
@@ -183,11 +207,13 @@ public class TwitterMain{
 		            @Override
 		            protected void succeeded(){
 		            	TimelineStatuses.set(getValue());
+		            	indicator.set(0);
 		            }
 		        };
 				return task;
 			}
 		};
+    	indicator.set(-1);
 		s.start();
 	}
 	
@@ -211,11 +237,13 @@ public class TwitterMain{
 		            @Override
 		            protected void succeeded(){
 		            	MentionStatuses.set(getValue());
+		            	indicator.set(0);
 		            }
 		        };
 				return task;
 			}
 		};
+    	indicator.set(-1);
 		s.start();
 	}
 	
@@ -259,6 +287,7 @@ public class TwitterMain{
 		            }
 		            @Override
 		            protected void succeeded(){
+		            	indicator.set(0);
 		            	ChatStatuses.set(getValue());
 		            }
 		        };
@@ -266,6 +295,7 @@ public class TwitterMain{
 			}
 		};
 		s.start();
+    	indicator.set(-1);
 	}
 	
 	public Status getStatus(long Id) throws TwitterException{

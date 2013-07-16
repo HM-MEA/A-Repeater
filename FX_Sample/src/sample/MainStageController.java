@@ -15,8 +15,6 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -31,6 +29,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -52,7 +51,6 @@ public class MainStageController implements Initializable{
 	long reply_id = 0;
 	static String ScreenName;
 	File image = null;
-	IntegerProperty x = new SimpleIntegerProperty();
 	
 	@FXML
 	private Button button1;
@@ -95,6 +93,9 @@ public class MainStageController implements Initializable{
 	
 	@FXML
 	private Button addimage;
+
+	@FXML
+	private ProgressIndicator Indicator = new ProgressIndicator();
 	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -150,6 +151,18 @@ public class MainStageController implements Initializable{
 			@Override
 			public void changed(ObservableValue<? extends ArrayList<Exstatus>> arg0,ArrayList<Exstatus> arg1, ArrayList<Exstatus> arg2) {
 				setChats(arg2);
+			}
+		});
+		Twmain.indicator.addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0,Number arg1, Number arg2) {	
+				if(arg2.intValue() == -1){
+					Indicator.setProgress(-1);
+					Indicator.setVisible(true);
+				}else{
+					Indicator.setProgress(0);
+					Indicator.setVisible(false);
+				}	
 			}
 		});
 		try {

@@ -79,7 +79,7 @@ public class TwitterStreamMain {
 	}
 		
 	class MyUserStreamAdapter extends UserStreamAdapter{
-		public void onStatus(final Status status){	
+		public void onStatus(Status status){	
 			if(status.getText().contains(ScreenName)){
 				setMention(status);
 			}

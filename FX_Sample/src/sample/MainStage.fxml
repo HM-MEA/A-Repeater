@@ -74,5 +74,6 @@
       </contextMenu>
     </Label>
     <Button fx:id="addimage" mnemonicParsing="false" onAction="#onAddImage" prefWidth="44.0" text="画像" AnchorPane.bottomAnchor="22.0" AnchorPane.rightAnchor="0.0" />
+    <ProgressIndicator id="Indicaator" fx:id="Indicator" prefHeight="31.0" prefWidth="24.0" progress="-0.05" visible="false" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0" />
   </children>
 </AnchorPane>
