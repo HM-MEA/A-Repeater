@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -79,11 +80,16 @@ public class TwitterStreamMain {
 	}
 		
 	class MyUserStreamAdapter extends UserStreamAdapter{
-		public void onStatus(Status status){	
-			if(status.getText().contains(ScreenName)){
-				setMention(status);
-			}
-			setTimeline(status);		
+		public void onStatus(final Status status){
+			Platform.runLater(new Runnable(){
+				@Override
+				public void run() {
+					if(status.getText().contains(ScreenName)){
+						setMention(status);
+					}
+					setTimeline(status);
+				}
+			});	
 		}
 		public void onFavorite(User source, User target,Status favoritedStatus){
 			System.out.println(source.getScreenName() + "‚ª" + target.getScreenName() + "‚Ì" + favoritedStatus.getText() + "‚ð‚¨‹C‚É“ü‚è‚É“o˜^‚µ‚Ü‚µ‚½");	

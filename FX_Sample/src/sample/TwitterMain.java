@@ -149,27 +149,45 @@ public class TwitterMain{
 	}
 	
 	public void retweet(final Status status) throws TwitterException{
-		Task<Status> task = new Task<Status>(){
+		Service<Status> s = new Service<Status>(){
 			@Override
-			protected Status call() throws Exception {
-				return 	twitter.retweetStatus(status.getId());
+			protected Task<Status> createTask(){
+				Task<Status> task = new Task<Status>() {
+		            @Override
+		            protected Status call() throws Exception {
+		            	return twitter.retweetStatus(status.getId());
+		            }
+		            @Override
+		            protected void succeeded(){
+		            	indicator.set(0);
+		            }
+		        };
+				return task;
 			}
 		};
-		Thread t = new Thread(task);
-		t.setDaemon(true);
-		t.start();
+    	indicator.set(-1);
+		s.start();
 	}
 	
 	public void favorite(final Status status) throws TwitterException{
-		Task<Status> task = new Task<Status>(){
+		Service<Status> s = new Service<Status>(){
 			@Override
-			protected Status call() throws Exception {
-				return 	twitter.createFavorite(status.getId());
+			protected Task<Status> createTask(){
+				Task<Status> task = new Task<Status>() {
+		            @Override
+		            protected Status call() throws Exception {
+		            	return twitter.createFavorite(status.getId());
+		            }
+		            @Override
+		            protected void succeeded(){
+		            	indicator.set(0);
+		            }
+		        };
+				return task;
 			}
 		};
-		Thread t = new Thread(task);
-		t.setDaemon(true);
-		t.start();
+    	indicator.set(-1);
+		s.start();
 	}
 	
 	public List<Status> getUserTweet(long userid) throws TwitterException{
