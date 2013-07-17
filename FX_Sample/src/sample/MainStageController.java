@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
-import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.TwitterException;
+import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -112,9 +112,9 @@ public class MainStageController implements Initializable{
 				updateMention(arg2);
 			}
 		});
-		Twmain.DMessages.addListener(new ChangeListener<List<DirectMessage>>(){
+		Twmain.DMessages.addListener(new ChangeListener<List<Exstatus>>(){
 			@Override
-			public void changed(ObservableValue<? extends List<DirectMessage>> arg0,List<DirectMessage> arg1, List<DirectMessage> arg2) {
+			public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
 				updateDM(arg2);
 			}
 		});
@@ -131,9 +131,9 @@ public class MainStageController implements Initializable{
 				setMention(arg2);
 			}
 		});
-		TwSmain.dmessage.addListener(new ChangeListener<DirectMessage>(){
+		TwSmain.dmessage.addListener(new ChangeListener<Exstatus>(){
 			@Override
-			public void changed(ObservableValue<? extends DirectMessage> arg0,DirectMessage arg1, DirectMessage arg2) {
+			public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1,Exstatus arg2) {
 				setDM(arg2);
 			}	
 		});
@@ -271,9 +271,9 @@ public class MainStageController implements Initializable{
 		}
 	}
 	
-	private void updateDM(List<DirectMessage> messages){
-		Collections.reverse(messages);	
-		for(DirectMessage dm : messages){
+	private void updateDM(List<Exstatus> arg2){
+		Collections.reverse(arg2);	
+		for(Exstatus dm : arg2){
 			setDM(dm);
 		}
 	}
@@ -306,12 +306,13 @@ public class MainStageController implements Initializable{
 		mentions.getItems().add(0,label);
 	}
 	
-	public void setDM(DirectMessage dm){
-		Message_id = dm.getId();
+	public void setDM(Exstatus dm){
+		Message_id = dm.getDMessage().getId();
 		
 		Label label = new Label();
 		label.setUserData(dm);
-		label.setText(StringController.createDMString(dm));
+		label.setText(StringController.createDMString(dm.getDMessage()));
+		label.setGraphic(new ImageView(dm.getImage()));
 		dms.getItems().add(0,label);
 	}
 			
@@ -348,6 +349,32 @@ public class MainStageController implements Initializable{
 	}
 	
 	@FXML
+	private void onTimelineSendDM() throws IOException{
+		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
+		Status status = (Status)model.getSelectedItem().getUserData();
+		sendDM(status.getUser());
+	}
+	
+	@FXML
+	private void onMentionSendDM() throws IOException{
+		MultipleSelectionModel<Label> model = mentions.getSelectionModel(); 
+		Status status = (Status)model.getSelectedItem().getUserData();
+		sendDM(status.getUser());
+	}
+	
+	private void sendDM(User user) throws IOException{
+		Stage AStage = new Stage();
+		AStage.setTitle("Send DirectMessage");
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("DirectMessageWindow.fxml"));
+		Parent Aroot = (Parent) loader.load();
+		DirectMessageWindowController controller = loader.getController();
+		controller.setData(Twmain,user);	
+		Scene Ascene = new Scene(Aroot);
+		AStage.setScene(Ascene);
+		AStage.show();
+	}
+	
+	@FXML
 	private void onMentionsReply(){
 		MultipleSelectionModel<Label> model = mentions.getSelectionModel();
 		Status replystatus = (Status)model.getSelectedItem().getUserData();
@@ -378,6 +405,7 @@ public class MainStageController implements Initializable{
 			this.label2.setText("Favorite‚ÉŽ¸”s‚µ‚Ü‚µ‚½");
 		}
 	}
+	
 	
 	@FXML
 	private void onOpenTimelineUser(){

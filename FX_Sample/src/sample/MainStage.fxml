@@ -25,6 +25,7 @@
                     <MenuItem mnemonicParsing="false" onAction="#onTimelineReTweet" text="ReTweet" />
                     <MenuItem mnemonicParsing="false" onAction="#onTimelineFavorite" text="Favorite" />
                     <MenuItem mnemonicParsing="false" onAction="#onOpenTimelineUser" text="Userを表示" />
+                    <MenuItem mnemonicParsing="false" onAction="#onTimelineSendDM" text="DMの送信" />
                     <MenuItem mnemonicParsing="false" onAction="#onSetTimelineChats" text="会話の表示" />
                   </items>
                 </ContextMenu>
@@ -42,6 +43,7 @@
                     <MenuItem mnemonicParsing="false" onAction="#onMentionReTweet" text="ReTweet" />
                     <MenuItem mnemonicParsing="false" onAction="#onMentionFavorite" text="Favorite" />
                     <MenuItem mnemonicParsing="false" onAction="#onOpenMentionUser" text="Userを表示" />
+                    <MenuItem mnemonicParsing="false" onAction="#onMentionSendDM" text="DMの送信" />
                     <MenuItem mnemonicParsing="false" onAction="#onSetMentionChats" text="会話の表示" />
                   </items>
                 </ContextMenu>

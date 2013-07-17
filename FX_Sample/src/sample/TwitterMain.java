@@ -32,7 +32,7 @@ public class TwitterMain{
 	
 	ObjectProperty<List<Exstatus>> TimelineStatuses = new SimpleObjectProperty<List<Exstatus>>();
 	ObjectProperty<List<Exstatus>> MentionStatuses = new SimpleObjectProperty<List<Exstatus>>();
-	ObjectProperty<List<DirectMessage>> DMessages = new SimpleObjectProperty<List<DirectMessage>>();
+	ObjectProperty<List<Exstatus>> DMessages = new SimpleObjectProperty<List<Exstatus>>();
 	ObjectProperty<ArrayList<Exstatus>> ChatStatuses = new SimpleObjectProperty<ArrayList<Exstatus>>();
 	
 	IntegerProperty indicator = new SimpleIntegerProperty();
@@ -190,6 +190,8 @@ public class TwitterMain{
 		s.start();
 	}
 	
+	
+	
 	public List<Status> getUserTweet(long userid) throws TwitterException{
 		List<Status> statuses =  twitter.getUserTimeline(userid);
 		return statuses;
@@ -265,20 +267,34 @@ public class TwitterMain{
 		s.start();
 	}
 	
-	public void getDMs(int page,final long sinceid) throws TwitterException{
-		Task<List<DirectMessage>> task = new Task<List<DirectMessage>>(){
+	public void getDMs(final int page,final long sinceid) throws TwitterException{
+		Service<List<Exstatus>> s = new Service<List<Exstatus>>(){
 			@Override
-			protected List<DirectMessage> call() throws Exception {
-				return twitter.getDirectMessages(new Paging(1).sinceId(sinceid));
-			}
-			@Override
-			protected void succeeded(){
-				DMessages.set(getValue());
+			protected Task<List<Exstatus>> createTask(){
+				Task<List<Exstatus>> task = new Task<List<Exstatus>>() {
+		            @Override
+		            protected List<Exstatus> call() throws Exception {
+		            	List<Exstatus> statuses = new ArrayList<Exstatus>();
+		            	List<DirectMessage> list = twitter.getDirectMessages(new Paging(page).sinceId(sinceid));
+		            	for(DirectMessage dm:list){
+		            		Exstatus e = new Exstatus();
+		            		e.setDMessage(dm);
+		            		e.setImage(new Image(dm.getSender().getMiniProfileImageURL()));
+		            		statuses.add(e);
+		            	}
+		            	return statuses;
+		            }
+		            @Override
+		            protected void succeeded(){
+		            	DMessages.set(getValue());
+		            	indicator.set(0);
+		            }
+		        };
+				return task;
 			}
 		};
-		Thread t = new Thread(task);
-		t.setDaemon(true);
-		t.start();
+    	indicator.set(-1);
+		s.start();
 	}
 	
 	public void getChats(final Status status){

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="300.0" xmlns:fx="http://javafx.com/fxml" fx:controller="sample.DirectMessageWindowController">
+  <children>
+    <Label fx:id="senduser" layoutY="6.0" prefHeight="17.0" prefWidth="286.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="7.0" />
+    <TextArea fx:id="text" prefHeight="68.0" prefWidth="250.0" wrapText="true" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="49.0" AnchorPane.topAnchor="31.0" />
+    <Button id="sentbutton" fx:id="sendbutton" mnemonicParsing="false" onAction="#onSendDMessage" prefHeight="68.0" prefWidth="49.0" text="送信" AnchorPane.bottomAnchor="1.0" AnchorPane.rightAnchor="1.0" />
+  </children>
+</AnchorPane>

@@ -27,7 +27,7 @@ public class TwitterStreamMain {
 	String ScreenName;
 	ObjectProperty<Exstatus> timeline_status = new SimpleObjectProperty<Exstatus>();
 	ObjectProperty<Exstatus> mention_status = new SimpleObjectProperty<Exstatus>();
-	ObjectProperty<DirectMessage> dmessage = new SimpleObjectProperty<DirectMessage>();
+	ObjectProperty<Exstatus> dmessage = new SimpleObjectProperty<Exstatus>();
 	IntegerProperty stream_f = new SimpleIntegerProperty();
 
 	TwitterStreamMain(){
@@ -78,6 +78,13 @@ public class TwitterStreamMain {
 		e.setImage(new Image(status.getUser().getMiniProfileImageURL()));
 		mention_status.set(e);
 	}
+	
+	public void setDMessage(DirectMessage dm){
+		Exstatus e = new Exstatus();
+		e.setDMessage(dm);
+		e.setImage(new Image(dm.getSender().getMiniProfileImageURL()));
+		dmessage.set(e);
+	}
 		
 	class MyUserStreamAdapter extends UserStreamAdapter{
 		public void onStatus(final Status status){
@@ -94,8 +101,13 @@ public class TwitterStreamMain {
 		public void onFavorite(User source, User target,Status favoritedStatus){
 			System.out.println(source.getScreenName() + "‚ª" + target.getScreenName() + "‚Ì" + favoritedStatus.getText() + "‚ð‚¨‹C‚É“ü‚è‚É“o˜^‚µ‚Ü‚µ‚½");	
 		}
-		public void onDirectMessage(DirectMessage dm){
-			dmessage.set(dm);
+		public void onDirectMessage(final DirectMessage dm){
+			Platform.runLater(new Runnable(){
+				@Override
+				public void run() {
+					setDMessage(dm);
+				}
+			});
 		}
 	}
 }
