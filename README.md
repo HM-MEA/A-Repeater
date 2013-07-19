@@ -1,4 +1,4 @@
-FX_Sample
+A Repeater
 =========
-JavaFXŠwK—p‚Éì‚Á‚Ä‚éTwitterƒNƒ‰ƒCƒAƒ“ƒg  
-Šî–{“I‚È‚±‚Æ‚Íˆê‰ž‚Å‚«‚Ü‚·
+JavaFXï¿½wï¿½Kï¿½pï¿½Éï¿½ï¿½ï¿½ï¿½Ä‚ï¿½Twitterï¿½Nï¿½ï¿½ï¿½Cï¿½Aï¿½ï¿½ï¿½g  
+ï¿½ï¿½ï¿½{ï¿½Iï¿½È‚ï¿½ï¿½Æ‚Íˆê‰žï¿½Å‚ï¿½ï¿½Ü‚ï¿½
