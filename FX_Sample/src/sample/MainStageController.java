@@ -291,6 +291,7 @@ public class MainStageController implements Initializable{
 		label.setText(StringController.createTweetString(status.getStatus()));
 		label.setGraphic(new ImageView(status.getImage()));
 		label.setContentDisplay(ContentDisplay.LEFT);
+		
 		timelines.getItems().add(0,label);		
 	}
 	
@@ -304,6 +305,8 @@ public class MainStageController implements Initializable{
 		label.setGraphic(new ImageView(status.getImage()));
 		label.setContentDisplay(ContentDisplay.LEFT);
 		mentions.getItems().add(0,label);
+		
+		
 	}
 	
 	public void setDM(Exstatus dm){
@@ -313,6 +316,7 @@ public class MainStageController implements Initializable{
 		label.setUserData(dm);
 		label.setText(StringController.createDMString(dm.getDMessage()));
 		label.setGraphic(new ImageView(dm.getImage()));
+		
 		dms.getItems().add(0,label);
 	}
 			

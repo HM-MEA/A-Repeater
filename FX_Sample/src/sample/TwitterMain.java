@@ -21,6 +21,7 @@ import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.User;
 import twitter4j.auth.AccessToken;
 
 public class TwitterMain{
@@ -34,6 +35,7 @@ public class TwitterMain{
 	ObjectProperty<List<Exstatus>> MentionStatuses = new SimpleObjectProperty<List<Exstatus>>();
 	ObjectProperty<List<Exstatus>> DMessages = new SimpleObjectProperty<List<Exstatus>>();
 	ObjectProperty<ArrayList<Exstatus>> ChatStatuses = new SimpleObjectProperty<ArrayList<Exstatus>>();
+	ObjectProperty<UserInfomation> UserInfo = new SimpleObjectProperty<UserInfomation>();
 	
 	IntegerProperty indicator = new SimpleIntegerProperty();
 	
@@ -189,19 +191,9 @@ public class TwitterMain{
     	indicator.set(-1);
 		s.start();
 	}
+		
 	
 	
-	
-	public List<Status> getUserTweet(long userid) throws TwitterException{
-		List<Status> statuses =  twitter.getUserTimeline(userid);
-		return statuses;
-	}
-	
-	public List<Status> getUserFavorite(long userid) throws TwitterException{
-		List<Status> statuses =  twitter.getFavorites(userid);
-		return statuses;
-	}
-			
 	public void getTimeline(final int page,final long sinceid) throws TwitterException{
 		Service<List<Exstatus>> s = new Service<List<Exstatus>>(){
 			@Override
@@ -336,18 +328,55 @@ public class TwitterMain{
 		return twitter.showStatus(Id);
 	}
 	
-	public boolean isFollowed(long id) throws Exception{
-		if(twitter.showFriendship(twitter.getId(), id).isTargetFollowedBySource()){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
 	public void follow(long id) throws TwitterException{
 		twitter.createFriendship(id);
 	}
 	public void unfollow(long id) throws TwitterException{
 		twitter.destroyFriendship(id);
+	}
+	
+	public void getUserInfo(final User user){
+		Service<UserInfomation> s = new Service<UserInfomation>(){
+			@Override
+			protected Task<UserInfomation> createTask(){
+				Task<UserInfomation> task = new Task<UserInfomation>() {
+		            @Override
+		            protected UserInfomation call() throws Exception {
+		            	UserInfomation ui = new UserInfomation();
+		            	ui.setScreenName(StringController.createScreenNameString(user));
+		            	ui.setUserInfo(user.getDescription());
+		            	ui.setIsFollow(twitter.showFriendship(twitter.getId(),user.getId()).isSourceFollowingTarget());
+		            	ui.setIcon(new Image(user.getOriginalProfileImageURL()));
+		            	ui.setTweet(getExstatuses(twitter.getUserTimeline(user.getId())));
+		            	ui.setFavorite(getExstatuses(twitter.getFavorites(user.getId())));
+		            	return ui;
+		            }
+		            @Override
+		            protected void succeeded(){
+		            	UserInfo.set(getValue());
+		            	indicator.set(0);
+		            }
+		        };
+				return task;
+			}
+		};
+    	indicator.set(-1);
+		s.start();
+	}
+	
+	public List<Exstatus> getExstatuses(List<Status> l){
+		List<Exstatus> le = new ArrayList<Exstatus>();
+		for(Status status:l){
+			Exstatus e = new Exstatus();
+    		e.setStatus(status);
+    		if(status.isRetweet()){
+    			e.setImage(new Image(status.getRetweetedStatus().getUser().getMiniProfileImageURL()));
+
+    		}else{
+    			e.setImage(new Image(status.getUser().getMiniProfileImageURL()));
+    		}	
+    		le.add(e);
+		}
+		return le;
 	}
 }
