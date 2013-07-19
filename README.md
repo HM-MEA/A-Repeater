@@ -1,4 +1,4 @@
 A Repeater
 =========
-JavaFXï¿½wï¿½Kï¿½pï¿½Éï¿½ï¿½ï¿½ï¿½Ä‚ï¿½Twitterï¿½Nï¿½ï¿½ï¿½Cï¿½Aï¿½ï¿½ï¿½g  
-ï¿½ï¿½ï¿½{ï¿½Iï¿½È‚ï¿½ï¿½Æ‚Íˆê‰žï¿½Å‚ï¿½ï¿½Ü‚ï¿½
+JavaFX‚ð—p‚¢‚Äì‚Á‚½Twitter‚ÌƒNƒ‰ƒCƒAƒ“ƒg‚Å‚·B  
+ˆê‰ž‰Ä‹x‚Ý‚É‚ÍƒŠƒŠ[ƒX—\’èB  
