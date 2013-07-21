@@ -18,7 +18,7 @@ public class Main extends Application {
 			Authfile.createNewFile();
 		}
 		
-		stage.setTitle("—¯”N¶");
+		stage.setTitle("A Repeater");
 		Parent root = FXMLLoader.load(getClass().getResource("MainStage.fxml"));
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
