@@ -55,7 +55,7 @@ public class TwitterMain{
 	
 	public String getScreenName() throws Exception{
 		String ScreenName;
-		ScreenName = twitter.verifyCredentials().getScreenName();
+		ScreenName = twitter.getScreenName();
 		return ScreenName;
 	}
 	

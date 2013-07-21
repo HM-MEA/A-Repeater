@@ -17,7 +17,7 @@ import twitter4j.auth.AccessToken;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -38,6 +38,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class MainStageController implements Initializable{
 	
@@ -99,82 +100,93 @@ public class MainStageController implements Initializable{
 	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		readTokenfile();
-		Twmain.TimelineStatuses.addListener(new ChangeListener<List<Exstatus>>(){
-			@Override
-			public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
-				updateTimeline(arg2);
-			}
-		});
-		Twmain.MentionStatuses.addListener(new ChangeListener<List<Exstatus>>(){
-			@Override
-			public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
-				updateMention(arg2);
-			}
-		});
-		Twmain.DMessages.addListener(new ChangeListener<List<Exstatus>>(){
-			@Override
-			public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
-				updateDM(arg2);
-			}
-		});
-		onUpdateTimelines();
-		TwSmain.timeline_status.addListener(new ChangeListener<Exstatus>(){
-			@Override
-			public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1,Exstatus arg2) {
-				setTimeline(arg2);
-			}
-		});
-		TwSmain.mention_status.addListener(new ChangeListener<Exstatus>(){
-			@Override
-			public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1,Exstatus arg2) {
-				setMention(arg2);
-			}
-		});
-		TwSmain.dmessage.addListener(new ChangeListener<Exstatus>(){
-			@Override
-			public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1,Exstatus arg2) {
-				setDM(arg2);
-			}	
-		});
-		TwSmain.stream_f.addListener(new ChangeListener<Number>(){
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0,	Number arg1, Number arg2) {
-				if(arg2.intValue() == 1){
-					streamcheck.setSelected(true);
-				}else{
-					streamcheck.setSelected(false);
+		if(Authfile.exists()){
+			readTokenfile();
+			Twmain.TimelineStatuses.addListener(new ChangeListener<List<Exstatus>>(){
+				@Override
+				public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
+					updateTimeline(arg2);
 				}
-			}
-		});	
-		Twmain.ChatStatuses.addListener(new ChangeListener<ArrayList<Exstatus>>(){
-			@Override
-			public void changed(ObservableValue<? extends ArrayList<Exstatus>> arg0,ArrayList<Exstatus> arg1, ArrayList<Exstatus> arg2) {
-				setChats(arg2);
-			}
-		});
-		Twmain.indicator.addListener(new ChangeListener<Number>(){
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0,Number arg1, Number arg2) {	
-				if(arg2.intValue() == -1){
-					Indicator.setProgress(-1);
-					Indicator.setVisible(true);
-				}else{
-					Indicator.setProgress(0);
-					Indicator.setVisible(false);
+			});
+			Twmain.MentionStatuses.addListener(new ChangeListener<List<Exstatus>>(){
+				@Override
+				public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
+					updateMention(arg2);
+				}
+			});
+			Twmain.DMessages.addListener(new ChangeListener<List<Exstatus>>(){
+				@Override
+				public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
+					updateDM(arg2);
+				}
+			});
+			onUpdateTimelines();
+			TwSmain.timeline_status.addListener(new ChangeListener<Exstatus>(){
+				@Override
+				public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1,Exstatus arg2) {
+					setTimeline(arg2);
+				}
+			});
+			TwSmain.mention_status.addListener(new ChangeListener<Exstatus>(){
+				@Override
+				public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1,Exstatus arg2) {
+					setMention(arg2);
+				}
+			});
+			TwSmain.dmessage.addListener(new ChangeListener<Exstatus>(){
+				@Override
+				public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1,Exstatus arg2) {
+					setDM(arg2);
 				}	
+			});
+			TwSmain.stream_f.addListener(new ChangeListener<Number>(){
+				@Override
+				public void changed(ObservableValue<? extends Number> arg0,	Number arg1, Number arg2) {
+					if(arg2.intValue() == 1){
+						streamcheck.setSelected(true);
+					}else{
+						streamcheck.setSelected(false);
+					}
+				}
+			});	
+			Twmain.ChatStatuses.addListener(new ChangeListener<ArrayList<Exstatus>>(){
+				@Override
+				public void changed(ObservableValue<? extends ArrayList<Exstatus>> arg0,ArrayList<Exstatus> arg1, ArrayList<Exstatus> arg2) {
+					setChats(arg2);
+				}
+			});
+			Twmain.indicator.addListener(new ChangeListener<Number>(){
+				@Override
+				public void changed(ObservableValue<? extends Number> arg0,Number arg1, Number arg2) {	
+					if(arg2.intValue() == -1){
+						Indicator.setProgress(-1);
+						Indicator.setVisible(true);
+					}else{
+						Indicator.setProgress(0);
+						Indicator.setVisible(false);
+					}	
+				}
+			});
+			try {
+				TwSmain.startUserStream();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		});
-		try {
-			TwSmain.startUserStream();
-		} catch (Exception e) {
-			e.printStackTrace();
+			imagename.setVisible(false);
+		}else{
+			try {
+				accountAuthorization();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		imagename.setVisible(false);
 	}
 	
 	@FXML
-	protected void accountAuthorization(ActionEvent e) throws Exception {
+	protected void accountAuthorization() throws IOException{
+		Authfile.createNewFile();
+		Authfile.setWritable(true);
+		
 		Stage AStage = new Stage();
 		AStage.setTitle("Authorization");
 		AStage.initModality(Modality.APPLICATION_MODAL);
@@ -182,6 +194,13 @@ public class MainStageController implements Initializable{
 		Scene Ascene = new Scene(Aroot);
 		AStage.setScene(Ascene);
 		AStage.show();
+				
+		AStage.setOnCloseRequest(new EventHandler<WindowEvent>(){
+			@Override
+			public void handle(WindowEvent arg0) {
+				initialize(null, null);
+			}
+		});
 	}
 	
 	@FXML
@@ -206,7 +225,7 @@ public class MainStageController implements Initializable{
 		} catch (Exception e) {
 			this.label2.setText("スクリーンネームの取得に失敗しました");
 			e.printStackTrace();
-		}
+		}		
 	}
 	
 	@FXML

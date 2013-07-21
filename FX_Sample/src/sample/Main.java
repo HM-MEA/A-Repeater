@@ -1,7 +1,5 @@
 package sample;
 
-import java.io.File;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,14 +8,9 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 		
-	File Authfile = new File("AccessToken.txt");
 		
 	@Override
 	public void start(Stage stage) throws Exception {
-		if (!Authfile.exists()){
-			Authfile.createNewFile();
-		}
-		
 		stage.setTitle("A Repeater");
 		Parent root = FXMLLoader.load(getClass().getResource("MainStage.fxml"));
 		Scene scene = new Scene(root);
@@ -33,6 +26,5 @@ public class Main extends Application {
 	public static void main(String[] args) {		
 		launch(args);
 	}
-	
 }
 
