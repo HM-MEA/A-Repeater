@@ -102,22 +102,22 @@ public class MainStageController implements Initializable{
 	public void initialize(URL url, ResourceBundle rb) {
 		if(Authfile.exists()){
 			readTokenfile();
-			Twmain.TimelineStatuses.addListener(new ChangeListener<List<Exstatus>>(){
+			Twmain.TimelineStatuses.addListener(new ChangeListener<Exstatus>(){
 				@Override
-				public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
-					updateTimeline(arg2);
+				public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1, Exstatus arg2) {
+					setTimeline(arg2);
 				}
 			});
-			Twmain.MentionStatuses.addListener(new ChangeListener<List<Exstatus>>(){
+			Twmain.MentionStatuses.addListener(new ChangeListener<Exstatus>(){
 				@Override
-				public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
-					updateMention(arg2);
+				public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1, Exstatus arg2) {
+					setMention(arg2);
 				}
 			});
-			Twmain.DMessages.addListener(new ChangeListener<List<Exstatus>>(){
+			Twmain.DMessages.addListener(new ChangeListener<Exstatus>(){
 				@Override
-				public void changed(ObservableValue<? extends List<Exstatus>> arg0,List<Exstatus> arg1, List<Exstatus> arg2) {
-					updateDM(arg2);
+				public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1, Exstatus arg2) {
+					setDM(arg2);
 				}
 			});
 			onUpdateTimelines();
@@ -148,10 +148,16 @@ public class MainStageController implements Initializable{
 						streamcheck.setSelected(false);
 					}
 				}
-			});	
-			Twmain.ChatStatuses.addListener(new ChangeListener<ArrayList<Exstatus>>(){
+			});
+			TwSmain.favoritedStatusProperty.addListener(new ChangeListener<FavoritedStatus>(){
 				@Override
-				public void changed(ObservableValue<? extends ArrayList<Exstatus>> arg0,ArrayList<Exstatus> arg1, ArrayList<Exstatus> arg2) {
+				public void changed(ObservableValue<? extends FavoritedStatus> arg0,FavoritedStatus arg1, FavoritedStatus arg2) {
+					
+				}
+			});
+			Twmain.ChatStatuses.addListener(new ChangeListener<Exstatus>(){
+				@Override
+				public void changed(ObservableValue<? extends Exstatus> arg0,Exstatus arg1, Exstatus arg2) {
 					setChats(arg2);
 				}
 			});
@@ -275,28 +281,7 @@ public class MainStageController implements Initializable{
 			e.printStackTrace();
 		}
 	}
-	
-	private void updateTimeline(List<Exstatus> statuses){
-		Collections.reverse(statuses);
-		for (Exstatus status : statuses) {
-			setTimeline(status);
-		}
-	}
-	
-	private void updateMention(List<Exstatus> statuses){
-		Collections.reverse(statuses);
-		for(Exstatus status : statuses){
-			setMention(status);
-		}
-	}
-	
-	private void updateDM(List<Exstatus> arg2){
-		Collections.reverse(arg2);	
-		for(Exstatus dm : arg2){
-			setDM(dm);
-		}
-	}
-	
+				
 	public void setTimeline(Exstatus status){
 		Timeline_id = status.getStatus().getId();
 		
@@ -477,15 +462,8 @@ public class MainStageController implements Initializable{
 		Twmain.getChats(OpenUserStatus);
 		TwitterTab.getSelectionModel().select(3);
     }
-	
-	private void setChats(ArrayList<Exstatus> statuses){
-		Collections.reverse(statuses);	
-		for(Exstatus status:statuses){
-			setChatData(status);
-		}
-	}
-	
-	private void setChatData(Exstatus status){
+				
+	private void setChats(Exstatus status){
 		
 		Label label = new Label();
 		label.setWrapText(true);
@@ -535,6 +513,10 @@ public class MainStageController implements Initializable{
 	private void onRemoveImage(){
 		image = null;
 		imagename.setVisible(false);
+	}
+	
+	private void favoriteNotification(FavoritedStatus fs){
+		
 	}
 	
 	@FXML

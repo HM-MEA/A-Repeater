@@ -3,6 +3,7 @@ package sample;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,7 +14,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
-
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -31,10 +31,10 @@ public class TwitterMain{
 	File Keyfile = new File("CunsumerKey.txt");
 	Scanner scan;
 	
-	ObjectProperty<List<Exstatus>> TimelineStatuses = new SimpleObjectProperty<List<Exstatus>>();
-	ObjectProperty<List<Exstatus>> MentionStatuses = new SimpleObjectProperty<List<Exstatus>>();
-	ObjectProperty<List<Exstatus>> DMessages = new SimpleObjectProperty<List<Exstatus>>();
-	ObjectProperty<ArrayList<Exstatus>> ChatStatuses = new SimpleObjectProperty<ArrayList<Exstatus>>();
+	ObjectProperty<Exstatus> TimelineStatuses = new SimpleObjectProperty<Exstatus>();
+	ObjectProperty<Exstatus> MentionStatuses = new SimpleObjectProperty<Exstatus>();
+	ObjectProperty<Exstatus> DMessages = new SimpleObjectProperty<Exstatus>();
+	ObjectProperty<Exstatus> ChatStatuses = new SimpleObjectProperty<Exstatus>();
 	ObjectProperty<UserInfomation> UserInfo = new SimpleObjectProperty<UserInfomation>();
 	
 	IntegerProperty indicator = new SimpleIntegerProperty();
@@ -218,7 +218,11 @@ public class TwitterMain{
 		            }
 		            @Override
 		            protected void succeeded(){
-		            	TimelineStatuses.set(getValue());
+		            	List<Exstatus> statuses = getValue();
+		            	Collections.reverse(statuses);
+		            	for(int i = 0;i < statuses.size();i++){
+		            		TimelineStatuses.set(statuses.get(i));
+		            	}
 		            	indicator.set(0);
 		            }
 		        };
@@ -248,7 +252,11 @@ public class TwitterMain{
 		            }
 		            @Override
 		            protected void succeeded(){
-		            	MentionStatuses.set(getValue());
+		            	List<Exstatus> statuses = getValue();
+		            	Collections.reverse(statuses);
+		            	for(int i = 0;i < statuses.size();i++){
+		            		MentionStatuses.set(statuses.get(i));
+		            	}
 		            	indicator.set(0);
 		            }
 		        };
@@ -278,7 +286,11 @@ public class TwitterMain{
 		            }
 		            @Override
 		            protected void succeeded(){
-		            	DMessages.set(getValue());
+		            	List<Exstatus> statuses = getValue();
+		            	Collections.reverse(statuses);
+		            	for(int i = 0;i < statuses.size();i++){   	
+		            		DMessages.set(statuses.get(i));
+		            	}
 		            	indicator.set(0);
 		            }
 		        };
@@ -313,8 +325,12 @@ public class TwitterMain{
 		            }
 		            @Override
 		            protected void succeeded(){
+		            	ArrayList<Exstatus> Chats = getValue();
+		            	Collections.reverse(Chats);
+		            	for(int i = 0;i < Chats.size();i++){
+		            		ChatStatuses.set(Chats.get(i));
+		            	}
 		            	indicator.set(0);
-		            	ChatStatuses.set(getValue());
 		            }
 		        };
 				return task;
