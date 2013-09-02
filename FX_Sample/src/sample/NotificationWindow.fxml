@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="vbox" prefHeight="119.99990000000253" prefWidth="283.9998779296875" xmlns:fx="http://javafx.com/fxml" fx:controller="sample.NotificationWindowController">
+  <children>
+    <Label fx:id="Title" alignment="TOP_LEFT" contentDisplay="TOP" prefWidth="256.0" wrapText="true">
+      <VBox.margin>
+        <Insets left="14.0" top="5.0" fx:id="x1" />
+      </VBox.margin>
+    </Label>
+    <Label id="status" fx:id="TargetName" prefWidth="256.0" wrapText="true" VBox.margin="$x1" />
+    <Label fx:id="status" prefWidth="256.0" wrapText="true" VBox.margin="$x1" />
+  </children>
+</VBox>

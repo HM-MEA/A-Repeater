@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
@@ -14,13 +12,17 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.auth.AccessToken;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -37,8 +39,10 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 public class MainStageController implements Initializable{
 	
@@ -52,6 +56,7 @@ public class MainStageController implements Initializable{
 	long reply_id = 0;
 	static String ScreenName;
 	File image = null;
+	Rectangle2D ScreenBounds = Screen.getPrimary().getBounds();
 	
 	@FXML
 	private Button button1;
@@ -152,7 +157,7 @@ public class MainStageController implements Initializable{
 			TwSmain.favoritedStatusProperty.addListener(new ChangeListener<FavoritedStatus>(){
 				@Override
 				public void changed(ObservableValue<? extends FavoritedStatus> arg0,FavoritedStatus arg1, FavoritedStatus arg2) {
-					
+					favoriteNotification(arg2);
 				}
 			});
 			Twmain.ChatStatuses.addListener(new ChangeListener<Exstatus>(){
@@ -413,8 +418,7 @@ public class MainStageController implements Initializable{
 			this.label2.setText("Favorite‚ÉŽ¸”s‚µ‚Ü‚µ‚½");
 		}
 	}
-	
-	
+		
 	@FXML
 	private void onOpenTimelineUser(){
 		MultipleSelectionModel<Label> model = timelines.getSelectionModel(); 
@@ -516,7 +520,30 @@ public class MainStageController implements Initializable{
 	}
 	
 	private void favoriteNotification(FavoritedStatus fs){
+		final Stage AStage = new Stage();
+		AStage.setTitle("Notification");
+		AStage.setResizable(false);
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("NotificationWindow.fxml"));
+			Parent Aroot = (Parent)loader.load();
+			Scene Ascene = new Scene(Aroot);
+			AStage.setScene(Ascene);
+			AStage.setX(ScreenBounds.getWidth() - 320);
+			AStage.setY(ScreenBounds.getHeight() - 190);
+			AStage.show();
+			NotificationWindowController controller = loader.getController();
+			controller.setNotificationData(fs);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
+		Timeline closetimeline = new Timeline(new KeyFrame(new Duration(5000),new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent arg0) {
+				AStage.close();
+			}
+		}));
+		closetimeline.play();
 	}
 	
 	@FXML

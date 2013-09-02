@@ -99,10 +99,15 @@ public class TwitterStreamMain {
 				}
 			});	
 		}
-		public void onFavorite(User source, User target,Status favoritedStatus){
-			System.out.println(source.getScreenName() + "‚ª" + target.getScreenName() + "‚Ì" + favoritedStatus.getText() + "‚ð‚¨‹C‚É“ü‚è‚É“o˜^‚µ‚Ü‚µ‚½");
-			FavoritedStatus favoritedstatus = new FavoritedStatus(source,target,favoritedStatus);
-			favoritedStatusProperty.set(favoritedstatus);
+		public void onFavorite(final User source, final User target,final Status favoritedStatus){
+			Platform.runLater(new Runnable(){
+				@Override
+				public void run() {
+					System.out.println(source.getScreenName() + "‚ª" + target.getScreenName() + "‚Ì" + favoritedStatus.getText() + "‚ð‚¨‹C‚É“ü‚è‚É“o˜^‚µ‚Ü‚µ‚½");
+					FavoritedStatus favoritedstatus = new FavoritedStatus(source,target,favoritedStatus);
+					favoritedStatusProperty.set(favoritedstatus);
+				}
+			});
 		}
 		public void onDirectMessage(final DirectMessage dm){
 			Platform.runLater(new Runnable(){
